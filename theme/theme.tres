@@ -1,0 +1,46 @@
+[gd_resource type="Theme" load_steps=7 format=2]
+
+[ext_resource path="res://MOD_CONTENT/CruS Mod Base/assets/new_styleboxtexture.tres" type="StyleBox" id=1]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 5.0
+bg_color = Color( 0.54902, 0.54902, 0.54902, 0.164706 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+content_margin_left = 5.0
+bg_color = Color( 0.54902, 0.54902, 0.54902, 0.709804 )
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0, 0.536313 )
+colors = PoolColorArray( 0, 0, 0, 0, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+width = 1
+
+[sub_resource type="StyleBoxEmpty" id=4]
+content_margin_top = 5.0
+
+[resource]
+Button/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+Button/colors/font_color_hover = Color( 0.784314, 0.784314, 0.784314, 1 )
+Label/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+Label/constants/line_spacing = 3
+Label/constants/shadow_as_outline = 0
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/fonts/font = null
+Label/styles/normal = null
+OptionButton/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+OptionButton/colors/font_color_pressed = Color( 0.878431, 0.878431, 0.878431, 1 )
+OptionButton/styles/hover = SubResource( 1 )
+OptionButton/styles/normal = SubResource( 5 )
+OptionButton/styles/pressed = SubResource( 1 )
+PopupMenu/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+PopupMenu/icons/checked = SubResource( 3 )
+PopupMenu/icons/radio_checked = SubResource( 3 )
+PopupMenu/icons/radio_unchecked = SubResource( 3 )
+PopupMenu/icons/unchecked = SubResource( 3 )
+PopupMenu/styles/panel = SubResource( 4 )
+ToolButton/colors/font_color_hover = Color( 0.717647, 0.717647, 0.717647, 1 )
+ToolButton/styles/hover = ExtResource( 1 )

@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/csquad-util/theme/base.tres" type="Theme" id=1]
+[ext_resource path="res://addons/csquad-util/src/ui/DebugLevel.gd" type="Script" id=2]
+
+[node name="MainPanel" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DebugLevel" type="VBoxContainer" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 2 )
+
+[node name="Title" type="RichTextLabel" parent="TabContainer/DebugLevel"]
+margin_right = 1272.0
+margin_bottom = 15.0
+bbcode_enabled = true
+bbcode_text = "[indent]_debug[/indent] Level Manager"
+text = "	_debug Level Manager"
+fit_content_height = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="TabContainer/DebugLevel"]
+margin_top = 19.0
+margin_right = 1272.0
+margin_bottom = 56.0
+
+[node name="Enabled" type="HBoxContainer" parent="TabContainer/DebugLevel/VBoxContainer2"]
+margin_right = 1272.0
+margin_bottom = 24.0
+size_flags_stretch_ratio = 0.0
+
+[node name="CheckBox" type="CheckBox" parent="TabContainer/DebugLevel/VBoxContainer2/Enabled"]
+margin_right = 24.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="TabContainer/DebugLevel/VBoxContainer2/Enabled"]
+margin_left = 28.0
+margin_top = 5.0
+margin_right = 74.0
+margin_bottom = 19.0
+text = "Enable "
+
+[node name="LevelList" type="ItemList" parent="TabContainer/DebugLevel/VBoxContainer2"]
+margin_top = 28.0
+margin_right = 1272.0
+margin_bottom = 37.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 16.89
+auto_height = true
+same_column_width = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/DebugLevel"]
+visible = false
+margin_top = 4.0
+margin_right = 1272.0
+margin_bottom = 28.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
