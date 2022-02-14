@@ -8,7 +8,7 @@ tool
 # method, but in its current form it breaks on beyond smaller test maps-until that's fully
 # functioning (a refined version of) the older method will remain.
 
-var plugin
+var plugin: EditorPlugin
 var editor: EditorInterface
 
 var edited: EditedScene
@@ -35,8 +35,8 @@ const NAVMESH_SOURCE_GROUP_NAME = 'nav-mesh'
 
 var _level_node: Spatial
 
-var nav_mesh_instance_base_path = plugin_path + "/src/res/NavigationMesh-CrueltySquadBase.tres"
-var nav_mesh_instance_base := load(nav_mesh_instance_base_path)
+const NavigationMeshCrueltySquadBaseRes = plugin_path + "/src/res/NavigationMesh-CrueltySquadBase.tres"
+const NavigationMeshCrueltySquadBase := preload(NavigationMeshCrueltySquadBaseRes)
 
 #region TODO: Convert to exports
 
@@ -122,7 +122,7 @@ var grouping_mode: int = NODE_GROUPING_MODE.NODE
 #endregion TODO: Convert to exports
 
 func InstanceNavMeshBase(type: int = MESH_BASE_TYPE.DEFAULT) -> NavigationMesh:
-	var inst: NavigationMesh = nav_mesh_instance_base.duplicate()
+	var inst: NavigationMesh = NavigationMeshCrueltySquadBase.duplicate()
 	# Just checked in the repl this should be only first bit
 	# inst.set_collision_mask(1)
 
@@ -149,11 +149,26 @@ class EditedScene:
 	# Expected to be top level node (at least visually in Scene tree)
 	var level: Spatial
 
-	var level_ref  := weakref(null)
-	var edited_ref := weakref(null)
+	var level_ref:  WeakRef = weakref(null)
+	var edited_ref: WeakRef = weakref(null)
+	
+	# Check if a level ref has been registered
+	func _get_has_handle() -> bool:
+		return is_instance_valid(level_ref.get_ref())
+	var has_handle: bool setget , _get_has_handle
+	
+	# Update weakrefs, or clear by passing null
+	func update(edited: Node) -> void:
+		if edited == null:
+			edited_ref = weakref(null)
+			level_ref  = weakref(null)
+		else:
+			edited_ref = weakref(edited)
+			level_ref  = weakref(TryResolveLevelNode(edited))
 
 	func _set_scene_filepath(path: String) -> void:
 		push_error('Tried to set filepath of scene resolved from weakref.')
+
 	func _get_scene_filepath() -> String:
 		# Check if ref is still valid, and return path of active scene
 		var level_deref = self.level_ref.get_ref()
@@ -200,6 +215,20 @@ class EditedScene:
 		return level_node.get_node('Navigation/NavigationMeshInstance') as NavigationMeshInstance
 
 #endregion Weakref-based Edited Scene Manager
+
+# Expected structure:
+#```
+# Level
+# ├─ Global Light
+# ├─ Navigation
+# │  └─ NavigationMeshInstance
+# ├─ WorldEnvironment
+# └─ QodotMap
+#```
+static func handles(node) -> bool:
+	return node is Spatial and (
+		(not (node as Node).get_owner() is Node) or node.owner.name != "Level"
+	) and EditedScene.TryResolveLevelNode(node) is Spatial
 
 #region Filename Patterns
 
@@ -259,25 +288,26 @@ class EntityNameFilter:
 	static func RegexSourceWithPatterns(patterns: int) -> String:
 		# Check for invalid flags (overkill, but as an exercise)
 		if PATTERNS.MAX <= patterns:
-			push_error('pattern bit flag out of expected bounds (%s)' % [ PATTERNS.MAX ])
+			push_error('EntityNameFilter:RegexSourceWithPatterns >> pattern bit flag out of expected bounds (%s)' % [ PATTERNS.MAX ])
 			return PatternBase
 
 		var ent_frags := PoolStringArray()
 
 		if patterns & PATTERNS.WORLDSPAWN:
-			print('[RegexSourceWithPatterns] Adding worldspawn pattern')
+			#print('[EntityNameFilter:RegexSourceWithPatterns] Adding worldspawn pattern')
 			ent_frags.push_back('worldspawn')
 		if patterns & PATTERNS.FUNC_GROUPS:
-			print('[RegexSourceWithPatterns] Adding func_group pattern')
+			#print('[EntityNameFilter:RegexSourceWithPatterns] Adding func_group pattern')
 			ent_frags.push_back('func_group')
 		if patterns & PATTERNS.WATER:
-			print('[RegexSourceWithPatterns] Adding water pattern')
+			#print('[EntityNameFilter:RegexSourceWithPatterns] Adding water pattern')
 			ent_frags.push_back('water')
 
 		return '%s(%s)' % [ PatternBase, ent_frags.join("|") ]
 
 	var regex: RegEx
 	func _init(pattern = DefaultPatterns):
+		print('[EntityNameFilter:on:init]')
 		regex = RegEx.new()
 		var compile_error: int
 
@@ -296,11 +326,12 @@ class EntityNameFilter:
 			push_error('Failed to compile regex source: <%s>' % [ src ])
 
 	# Checks name of node to see if should be processed for nav mesh generation
-	func is_processed_in_navmesh(node: Node) -> bool:
-		if regex.search(node.name):
-			return true
-		else:
-			return false
+	func is_processed_in_navmesh(node) -> bool:
+		return is_instance_valid(regex.search(node.name if node is Node else node))
+		#if regex.search(node.name):
+		#	return true
+		#else:
+		#	return false
 
 var ent_filter := EntityNameFilter.new()
 

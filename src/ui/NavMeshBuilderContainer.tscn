@@ -31,13 +31,13 @@ __meta__ = {
 
 [node name="Pad" type="MarginContainer" parent="."]
 margin_right = 5.0
-margin_bottom = 24.0
+margin_bottom = 31.0
 rect_min_size = Vector2( 5, 0 )
 
 [node name="NavIcon" type="TextureRect" parent="."]
 margin_left = 5.0
 margin_right = 17.0
-margin_bottom = 24.0
+margin_bottom = 31.0
 size_flags_vertical = 5
 texture = SubResource( 2 )
 stretch_mode = 6
@@ -46,56 +46,44 @@ icon = "NavigationMesh"
 
 [node name="BuildButton" type="ToolButton" parent="."]
 margin_left = 17.0
-margin_right = 62.0
-margin_bottom = 24.0
+margin_right = 64.0
+margin_bottom = 31.0
 text = "Build"
 
 [node name="SaveButton" type="ToolButton" parent="."]
-margin_left = 62.0
-margin_right = 103.0
-margin_bottom = 24.0
+margin_left = 64.0
+margin_right = 109.0
+margin_bottom = 31.0
 text = "Save"
 
 [node name="LoadButton" type="ToolButton" parent="."]
-margin_left = 103.0
-margin_right = 145.0
-margin_bottom = 24.0
+margin_left = 109.0
+margin_right = 155.0
+margin_bottom = 31.0
 text = "Load"
 
 [node name="ClearGroupsSep" type="VSeparator" parent="."]
-margin_left = 145.0
-margin_right = 149.0
-margin_bottom = 24.0
+margin_left = 155.0
+margin_right = 159.0
+margin_bottom = 31.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ClearGroupsButton" type="ToolButton" parent="."]
-margin_left = 149.0
-margin_right = 255.0
-margin_bottom = 24.0
+margin_left = 159.0
+margin_right = 277.0
+margin_bottom = 31.0
 text = "Clear Grouping"
 
 [node name="ParsedGeo" type="HBoxContainer" parent="."]
-margin_left = 255.0
-margin_right = 496.0
-margin_bottom = 24.0
-
-[node name="Sep" type="VSeparator" parent="ParsedGeo"]
-margin_right = 4.0
-margin_bottom = 24.0
-
-[node name="Label" type="Label" parent="ParsedGeo"]
-margin_left = 8.0
-margin_top = 5.0
-margin_right = 123.0
-margin_bottom = 19.0
-text = "Parsed Geometry "
+margin_left = 277.0
+margin_right = 399.0
+margin_bottom = 31.0
 
 [node name="ParsedGeoOption" type="OptionButton" parent="ParsedGeo"]
-margin_left = 127.0
-margin_right = 241.0
-margin_bottom = 24.0
+margin_right = 122.0
+margin_bottom = 31.0
 keep_pressed_outside = true
 text = "Static Colliders"
 items = [ "Static Colliders", null, false, 0, null, "Mesh Instances", null, false, 1, null, "Both", null, false, 2, null ]
@@ -105,9 +93,9 @@ __meta__ = {
 }
 
 [node name="WorldspawnOnlyCheckbox" type="CheckBox" parent="."]
-margin_left = 496.0
-margin_right = 636.0
-margin_bottom = 24.0
+margin_left = 399.0
+margin_right = 552.0
+margin_bottom = 31.0
 text = "Worldspawn Only"
 
 [connection signal="pressed" from="BuildButton" to="." method="_on_BuildButton_pressed"]
