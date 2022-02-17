@@ -1,0 +1,106 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/csquad-util/src/ui/ObjEntityDock/ObjEntityDock.gd" type="Script" id=1]
+[ext_resource path="res://addons/csquad-util/src/ui/ObjEntityDock/ObjBuilderEntityTree.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/csquad-util/theme/theme.tres" type="Theme" id=3]
+
+[node name="Entity Obj Info" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = 3.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemButtonToggles" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 1277.0
+margin_bottom = 20.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Select All" type="Button" parent="VBoxContainer/ItemButtonToggles"]
+margin_right = 636.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Select All"
+
+[node name="DeselectAll" type="Button" parent="VBoxContainer/ItemButtonToggles"]
+margin_left = 640.0
+margin_right = 1277.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Deselect All"
+
+[node name="Headers" type="HSplitContainer" parent="VBoxContainer"]
+visible = false
+margin_right = 1277.0
+margin_bottom = 14.0
+custom_constants/separation = 0
+dragger_visibility = 2
+
+[node name="Entity" type="Label" parent="VBoxContainer/Headers"]
+margin_right = 150.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 150, 0 )
+text = "Entity"
+
+[node name="Extractor" type="Label" parent="VBoxContainer/Headers"]
+margin_left = 150.0
+margin_right = 1277.0
+margin_bottom = 14.0
+text = "Extractor"
+
+[node name="HSep1" type="HSeparator" parent="VBoxContainer"]
+visible = false
+margin_right = 1277.0
+margin_bottom = 4.0
+
+[node name="EntityTreeScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+margin_top = 24.0
+margin_right = 1277.0
+margin_bottom = 669.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ObjBuilderEntityTree" parent="VBoxContainer/EntityTreeScrollContainer" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1277.0
+margin_bottom = 645.0
+
+[node name="ReloadListButton" type="Button" parent="VBoxContainer"]
+margin_top = 673.0
+margin_right = 1277.0
+margin_bottom = 693.0
+size_flags_horizontal = 3
+text = "Refresh List"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OpenFolderButton" type="Button" parent="VBoxContainer"]
+margin_top = 697.0
+margin_right = 1277.0
+margin_bottom = 717.0
+size_flags_horizontal = 3
+text = "Open Models Folder"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="VBoxContainer/ItemButtonToggles/Select All" to="." method="_on_Select_All_pressed"]
+[connection signal="pressed" from="VBoxContainer/ItemButtonToggles/DeselectAll" to="." method="_on_DeselectAll_pressed"]
+[connection signal="item_activated" from="VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree" to="." method="_on_ObjBuilderEntityTree_item_activated"]
+[connection signal="pressed" from="VBoxContainer/ReloadListButton" to="." method="_on_ReloadButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]

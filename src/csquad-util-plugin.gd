@@ -1,140 +1,116 @@
 extends EditorPlugin
 tool
 
-var plugin
+onready var plugin := self
 
-const plugin_name = 'csquad-util'
-const plugin_ui_name = 'CSquadUtil'
-func get_plugin_name() -> String:
-	return plugin_ui_name
-
+const plugin_name    := 'csquad-util'
+const plugin_ui_name := 'CSquadUtil'
 const plugin_path := "res://addons/" + plugin_name
 
-func get_plugin_icon() -> Texture:
-	return preload("../icons/main-screen.png")
+var dprint := preload("res://addons/csquad-util/src/util/logger.gd").Builder.get_for(self)
 
+const MAIN_PANEL_ENABLED         := false
+const HANDLES_DUMP_OBJ_PREVIEW   := true
+const MainPanelRes               := preload("./ui/MainPanel.tscn")
+#const NavMeshBuilderContainerPath := plugin_path + '/src/ui/NavMeshBuilderContainer.tscn'
+const NavMeshBuilderContainerRes := preload('./ui/NavMeshBuilderContainer.tscn')
+const HANDLES_MAIN_SCREEN_WHITELIST := [ '3D' ]
 
-const debug: bool = true
-const dprint_base_ctx := plugin_name
-static func dprint(msg: String, ctx: String = "") -> void:
-	if debug:
-		print('[%s] %s' % [
-			'%s%s' % [ dprint_base_ctx, ":" + ctx if len(ctx) > 0 else "" ],
-			msg
-		])
+var main_panel_instance:     Control
+var last_scratch_instance:   EditorScript
+var objbuild:                ObjBuilderManager # := load('res://addons/csquad-util/src/ObjBuilder3DMenuRes.gd').new(self)
+var nav:                     NavManager        # := NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
 
+var handled            := weakref(null)
+var active_main_screen := ""
+var last_event_stage   := '<NONE>'
 
-const MainPanel := preload("./ui/MainPanel.tscn")
-var main_panel_instance: Node
-const MAIN_PANEL_ENABLED := false
-
-var ObjEntityDocRes := load('res://addons/csquad-util/src/ui/ObjEntityDock.tscn')
-var objentity_dock_instance: Control
-
-const NavMeshBuilderContainerPath := plugin_path + '/src/ui/NavMeshBuilderContainer.tscn'
-const NavMeshBuilderContainerRes := preload(NavMeshBuilderContainerPath)
-
-#var nav      := NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
-var objbuild: ObjBuilderManager
-var nav: NavManager
-# var objbuild = load('res://addons/csquad-util/src/ObjBuilderManager.gd').new(self)
-
-# Debugging
-var last_event_stage := '<NONE>'
 
 func _init() -> void:
-	dprint('', 'on:init')
+	dprint.write('', 'on:init')
 	last_event_stage = 'INIT'
 
+
 func _ready() -> void:
-	dprint('', 'on:ready')
+	dprint.write('', 'on:ready')
 	last_event_stage = 'READY'
-	dprint('Initializing input values', 'on:ready')
+	dprint.write('Initializing input values', 'on:ready')
+
 
 func _enter_tree() -> void:
-	dprint('', 'on:enter-tree')
+	dprint.write('', 'on:enter-tree')
 	last_event_stage = 'IN-TREE'
-	
+
 	# Load singleton
 	add_autoload_singleton('CSquadUtil', 'res://addons/csquad-util/src/CSquadUtilGlobal.gd')
+	if not CSquadUtil._loaded:
+		dprint.write('[Begin] yield(CSquadUtil, "ready")', 'on:enter-tree')
+		yield(CSquadUtil, "ready")
+		dprint.write('[End]   yield(CSquadUtil, "ready")', 'on:enter-tree')
 	CSquadUtil.plugin = self
-	
-	nav      = load('res://addons/csquad-util/src/NavManager.gd').new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
+
+	nav      = NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
 	objbuild = ObjBuilderManager.new(self)
 
 	if MAIN_PANEL_ENABLED:
-		dprint('Adding main panel', 'on:enter-tree')
-		main_panel_instance = MainPanel.instance()
+		dprint.write('Adding main panel', 'on:enter-tree')
+		main_panel_instance = MainPanelRes.instance()
 		# Add the main panel to the editor's main viewport.
 		get_editor_interface().get_editor_viewport().add_child(main_panel_instance)
 		#Hide the main panel. Very much required.
 		main_panel_instance.make_visible(false)
 
-	objentity_dock_instance = ObjEntityDocRes.instance()
-	add_control_to_dock(EditorPlugin.DOCK_SLOT_RIGHT_UL, objentity_dock_instance)
 
 	add_tool_menu_item('Run CSquadUtil Script', self, 'run_scratch_script')
 
-	#region Main Screen Detection -  Init
+	_init_main_screen_checker()
 
-	# Try to find controls immediately (it will fail if not ready yet).
-	_on_editor_base_ready()
-	# Also connect to the ready signal, so that it is correctly detected then.
-	var editor_base = get_editor_interface().get_base_control()
-	editor_base.connect("ready", self, "_on_editor_base_ready")
-	# And connect to the signal that will trigger when a user actually interacts with top buttons.
-	connect("main_screen_changed", self, "_on_main_screen_changed")
-
-	#endregion Main Screen Detection -  Init
 
 func _exit_tree() -> void:
-	dprint('', 'on:exit-tree')
+	dprint.write('', 'on:exit-tree')
 	last_event_stage = 'EXIT-TREE'
 
-	#if main_panel_instance:
-	#	main_panel_instance.queue_free()
-
-	if objentity_dock_instance:
-		dprint('Removing obj entity dock control', 'on:exit-tree')
-		remove_control_from_docks(objentity_dock_instance)
-		#objentity_dock_instance.queue_free()
+	if MAIN_PANEL_ENABLED:
+		if main_panel_instance:
+			main_panel_instance.queue_free()
 
 	remove_tool_menu_item('Run CSquadUtil Script')
 
+
 func enable_plugin() -> void:
-	dprint('', 'on:plugin-enabled')
+	dprint.write('', 'on:plugin-enabled')
 	last_event_stage = 'PLUGIN-ENABLED'
 
+
 func disable_plugin() -> void:
-	dprint('', 'on:plugin-disabled')
+	dprint.write('', 'on:plugin-disabled')
 	last_event_stage = 'PLUGIN-DISABLED'
 
-	remove_autoload_singleton('CSquadUtilGlobal')
+	#remove_autoload_singleton('CSquadUtil')
+
 
 func has_main_screen() -> bool:
 	return MAIN_PANEL_ENABLED
 
-var handled: WeakRef = weakref(null)
 
-const HANDLES_DUMP_OBJ_PREVIEW := true
 func handles(object: Object) -> bool:
 	# At the time of writing, this plugin works with map and entity scenes. Until that changes,
 	# (or I notice its a problem dogfooding,) don't handle anything when not in the 3D panel.
 	if not HANDLES_MAIN_SCREEN_WHITELIST.has(active_main_screen):
 		return false
-		
+
 	# @NOTE: Doing this to avoid slowdowns when opening FGD file, this shouldn't effect anything
 	#        but if something breaks this is the problem.
 	# @NOTE: Main screen whitelist may make this unnecessary
 	if not (object is Node):
 		if HANDLES_DUMP_OBJ_PREVIEW:
-			dprint('<%s> Skipped: %s' % [ last_event_stage, object ], 'handles')
+			dprint.write('<%s> Skipped: %s' % [ last_event_stage, object ], 'handles')
 		return false
 	elif HANDLES_DUMP_OBJ_PREVIEW:
-		dprint('<%s> Checking: %s' % [ last_event_stage, object ], 'handles')
+		dprint.write('<%s> Checking: %s' % [ last_event_stage, object ], 'handles')
 
 	if not is_inside_tree():
-		dprint('[Out of tree]', 'handles')
+		dprint.write('[Out of tree]', 'handles')
 		push_error('%s >> handles called outside of tree. Passed object: %s' % [ plugin_name, object ])
 		return false
 
@@ -152,43 +128,26 @@ func handles(object: Object) -> bool:
 	else:
 		nav.builder.edited.update(null)
 		nav.set_visible(false)
-		
+
 	# For obj export (TODO: collect all this shit into UI script)
-	
+
 	if not is_instance_valid(objbuild):
 		push_error('%s [%s] >> objbuild is not a valid instance.' % [ plugin_name, last_event_stage ])
-		
+
 	elif objbuild.editable(object):
 		objbuild.edit(object)
 		objbuild.set_visible(true)
 	else:
-		objbuild.ui.clear_edited()
+		objbuild.ui_3d.clear_edited()
 		objbuild.set_visible(false)
 		return true
 
 	return false
 
 
-# @NOTE: Originally wrote assuming it was a necessary part of the process of updating the various 
-# components of the plugin, but not sure anymore
-#func make_visible(visible: bool) -> void:
-#	dprint('', 'make_visible')
-#
-#	if not is_inside_tree():
-#		return
-#
-#	var curr_scene = get_editor_interface().get_edited_scene_root()
-#	if is_instance_valid(nav):
-#		nav.set_visible(visible if nav.builder.edited.has_handle else false)
-#
-#	if is_instance_valid(objbuild.ui) and objbuild.ui.is_visible_in_tree():
-#		dprint('objbuild.ui.has_handle => %s' % [ objbuild.ui.has_handle ], 'make_visible')
-#		objbuild.set_visible(visible if objbuild.ui.has_handle else false)
-
-
 func edit(object: Object) -> void:
 	if not is_inside_tree():
-		dprint('<out of tree>', 'edit')
+		dprint.write('<out of tree>', 'edit')
 
 	if nav.builder.handles(object):
 		nav.builder.edited.update(object)
@@ -196,22 +155,15 @@ func edit(object: Object) -> void:
 	objbuild.edit(object)
 
 
-var last_scratch_instance: EditorScript
 func run_scratch_script(_arg):
 	last_scratch_instance = load('res://addons/csquad-util/src/tool-menu-scratch.gd').new(plugin)
 
 
 #region Main Screen Changes
 
-const HANDLES_MAIN_SCREEN_WHITELIST := [
-	'3D'
-]
-
-var active_main_screen: String = ""
-
 func _on_main_screen_changed(screen_name) -> void:
 	active_main_screen = screen_name
-	# dprint('Updated main screen: %s' % [ active_main_screen ], 'on:main-screen-changed')
+	# dprint.write('Updated main screen: %s' % [ active_main_screen ], 'on:main-screen-changed')
 
 func _on_editor_base_ready() -> void:
 	var editor_base = get_editor_interface().get_base_control()
@@ -225,8 +177,8 @@ func _on_editor_base_ready() -> void:
 	if asset_lib_button is ToolButton:
 		for button_node in asset_lib_button.get_parent().get_children():
 			if (button_node is ToolButton) and button_node.pressed:
-				dprint('Resolved main screen node with find_node method: %s => %s' % [ button_node, button_node.text ], 'on:editor-base-ready')
-				_on_main_screen_changed(button_node.text)
+				dprint.write('Resolved main screen node with find_node method: %s => %s' % [ button_node, button_node.text ], 'on:editor-base-ready')
+				emit_signal("main_screen_changed", button_node.text)
 				return
 
 	#endregion big brain mode
@@ -269,14 +221,26 @@ func _on_editor_base_ready() -> void:
 		if !(button_node is ToolButton):
 			continue
 		if (button_node.pressed):
-			dprint('Resolved main screen node: %s => %s' % [ button_node, button_node.text ], 'on:editor-base-ready')
+			dprint.write('Resolved main screen node: %s => %s' % [ button_node, button_node.text ], 'on:editor-base-ready')
 			_on_main_screen_changed(button_node.text)
 			break
 
 	#endregion Original
 
+func _init_main_screen_checker() -> void:
+	_on_editor_base_ready()
+	# Also connect to the ready signal, so that it is correctly detected then.
+	var editor_base = get_editor_interface().get_base_control()
+	editor_base.connect("ready", self, "_on_editor_base_ready")
+	# And connect to the signal that will trigger when a user actually interacts with top buttons.
+	connect("main_screen_changed", self, "_on_main_screen_changed")
+
 #endregion Main Screen Changes
 
+func get_plugin_name() -> String:
+	return plugin_ui_name
+func get_plugin_icon() -> Texture:
+	return preload("../icons/main-screen.png")
 
 #region Debugging
 
@@ -284,19 +248,19 @@ func handles_debug(object: Node) -> void:
 	if not object is Node:
 		return
 
-	dprint("Inspecting Node: @%s" % [ object ], 'handles')
-	dprint(" - Owner: @%s" % [ object.owner ], 'handles')
+	dprint.write("Inspecting Node: @%s" % [ object ], 'handles')
+	dprint.write(" - Owner: @%s" % [ object.owner ], 'handles')
 
 	var parent := (object as Node).get_parent()
 	if parent:
 		var count = parent.get_child_count()
-		dprint(" - Preview of @%s's parent's %s children:" % [ object, count ], 'handles')
-		dprint("   @%s:" % [ parent ], 'handles')
+		dprint.write(" - Preview of @%s's parent's %s children:" % [ object, count ], 'handles')
+		dprint.write("   @%s:" % [ parent ], 'handles')
 		var idx = 0
 		for child in parent.get_children():
 			idx = idx + 1
-			dprint("     [%s/%s] %s─ @%s" % [ idx, count, "├" if idx < count else "└", child ], 'handles')
+			dprint.write("     [%s/%s] %s─ @%s" % [ idx, count, "├" if idx < count else "└", child ], 'handles')
 	else:
-		dprint("@%s has no parent node." % [ object ], 'handles')
+		dprint.write("@%s has no parent node." % [ object ], 'handles')
 
 #endregion Debugging

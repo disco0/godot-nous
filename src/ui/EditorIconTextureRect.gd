@@ -1,6 +1,6 @@
+tool
 class_name EditorIconTextureRect
 extends TextureRect
-tool
 
 # Streamlined TextureRect for using editor icons in plugin UI
 

@@ -1,3 +1,4 @@
+class_name AlphaLabel
 extends Label
 tool
 
@@ -13,11 +14,11 @@ var editor_theme = editor.get_base_control().theme
 var godot_theme: Theme
 var base_font_color: Color
 
-			
+
 
 func _get_font_color() -> Color:
 	return base_font_color * Color(1, 1, 1, opacity)
-	
+
 var font_color: Color setget, _get_font_color
 
 func _enter_tree() -> void:

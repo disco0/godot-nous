@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/csquad-util/theme/theme.tres" type="Theme" id=1]
 [ext_resource path="res://addons/csquad-util/src/ui/main-panels/DebugLevel.gd" type="Script" id=2]
 [ext_resource path="res://addons/csquad-util/src/ui/main-panels/EntityTab.gd" type="Script" id=3]
-[ext_resource path="res://addons/csquad-util/src/ui/ObjBuilderItemList.gd" type="Script" id=4]
+[ext_resource path="res://addons/csquad-util/src/ui/ObjEntityDock/unused/ObjBuilderItemList_VBox.gd" type="Script" id=4]
 
 [node name="MainPanel" type="Control"]
 anchor_right = 1.0
@@ -24,7 +24,6 @@ __meta__ = {
 }
 
 [node name="_debug" type="VBoxContainer" parent="TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -90,6 +89,7 @@ __meta__ = {
 }
 
 [node name="ObjGen" type="MarginContainer" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -132,7 +132,7 @@ margin_right = 1248.0
 margin_bottom = 33.0
 bbcode_enabled = true
 bbcode_text = "[indent]_debug[/indent] Level Manager"
-text = "Entity Obj Info"
+text = "	_debug Level Manager"
 fit_content_height = true
 __meta__ = {
 "_edit_use_anchors_": false

@@ -1,6 +1,13 @@
 extends EditorScript
 tool
 
+var dprint := CSquadUtil.dprint_for('tool-menu-scratch')
+
+var run_count := 0
+func _run() -> void:
+	run_count += 1
+	dprint.write('Run #%02d' % [ run_count ], 'on:run')
+
 var plugin: EditorPlugin
 func _init(plugin: EditorPlugin):
 	self.plugin = plugin
@@ -11,7 +18,7 @@ func _init(plugin: EditorPlugin):
 class FGDSearchTests:
 	func _init():
 		pass
-		
+
 	func run() -> void:
 		var searcher := FGDEntitySceneSearch.new()
 		searcher.collect_entity_scenes()
@@ -19,14 +26,14 @@ class FGDSearchTests:
 		var size = searcher.point_ents.values().size()
 		for ent in searcher.point_ents.values():
 			idx += 1
-			print('[%03d/%03d] %s%s => %s' % [ 
+			print('[%03d/%03d] %s%s => %s' % [
 					idx + 1,
 					size,
 					ent.name,
 					' '.repeat(25 - len(ent.name)),
 					ent.scene_file.resource_path
 				])
-			
+
 
 #section RegexTests
 
@@ -48,11 +55,11 @@ class RegexTest:
 			return
 
 		print("Tests:\n%s" %  [ tests.join('\n')])
-		
+
 		_run()
 
 	func _run() -> void:
-		
+
 		var group_count := regex.get_group_count()
 		var test_cnt := tests.size()
 		for idx in test_cnt:
@@ -63,6 +70,6 @@ class RegexTest:
 			if not matched:
 				push_warning('Failed to match.')
 				continue
-			
+
 			for group_idx in group_count:
 				print('  - <%s>' % [ matched.get_string(group_idx) ])

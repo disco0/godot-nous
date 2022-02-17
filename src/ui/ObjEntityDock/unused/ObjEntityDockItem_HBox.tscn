@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://addons/csquad-util/src/ui/ObjEntityDockItem.gd" type="Script" id=1]
+[ext_resource path="res://addons/csquad-util/src/ui/ObjEntityDock/unused/ObjEntityDockItem_HBox.gd" type="Script" id=1]
 
 [node name="ObjEntityDockItem" type="HBoxContainer"]
 margin_right = 1280.0

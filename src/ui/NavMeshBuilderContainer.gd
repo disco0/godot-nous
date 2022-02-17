@@ -1,14 +1,8 @@
+tool
 class_name NavMeshBuilderContainer
 extends HBoxContainer
-tool
 
-const dprint_base_ctx := 'NavMeshBuilderContainer'
-static func dprint(msg: String, ctx: String = "") -> void:
-	print('[%s] %s' % [
-		'%s%s' % [ dprint_base_ctx, ":" + ctx if len(ctx) > 0 else "" ],
-		msg
-	])
-
+var dprint := CSquadUtil.dprint_for(self)
 
 signal build_navmesh()
 signal save_navmesh()
@@ -36,7 +30,7 @@ func register_builder(builder) -> void:
 
 	# Connect for config changes
 	connect('gen_setting_change', builder_instance, 'on_UI_build_setting_update', [ ])
-	
+
 	# Set initial values
 	var init_gen_mode = builder_instance.gen_mode as int
 	match init_gen_mode:
@@ -46,7 +40,7 @@ func register_builder(builder) -> void:
 			$ParsedGeo/ParsedGeoOption.select(1)
 		0b11:
 			$ParsedGeo/ParsedGeoOption.select(2)
-	
+
 	$WorldspawnOnlyCheckbox.pressed = builder_instance.target_mode == 1
 
 	# On navmesh manip command
@@ -71,10 +65,10 @@ func _on_ClearGroupsButton_pressed() -> void:
 
 
 func _on_ParsedGeoOption_item_selected(value: int) -> void:
-	dprint('Selected option index %s' % [ value ], 'on:ParsedGeoOption_item_selected')
+	dprint.write('Selected option index %s' % [ value ], 'on:ParsedGeoOption_item_selected')
 	emit_signal("gen_setting_change", value, GEN_SETTING.PARSED_GEOMETRY)
 
 
 func _on_WorldspawnOnlyCheckbox_toggled(button_pressed: bool) -> void:
-	dprint('Set worldspawn only: %s' % [ button_pressed ], 'on:WorldspawnOnlyCheckbox_toggled')
+	dprint.write('Set worldspawn only: %s' % [ button_pressed ], 'on:WorldspawnOnlyCheckbox_toggled')
 	emit_signal("gen_setting_change", button_pressed, GEN_SETTING.WORLDSPAWN_ONLY)
