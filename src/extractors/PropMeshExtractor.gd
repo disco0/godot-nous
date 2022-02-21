@@ -1,16 +1,23 @@
 tool
-class_name WeaponMeshExtractor
+class_name PropMeshExtractor
 extends EntityMeshExtractor
 
 func get_class() -> String:
-	return 'WeaponMeshExtractor'
+	return 'PropMeshExtractor'
 
 func can_target(node: Node) -> bool:
-	return node.name.begins_with('P_') or "_Ammo_" in node.name
+	var name = node.get_name()
+	if typeof(name) != TYPE_STRING or name.empty():
+		return false
+
+	return name.begins_with('Prop_') \
+		or name.begins_with('Health_Kit') \
+		or name in [ 'Crab', 'fullpizza' ]
 
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():
 		dprint.write('Resolving meshes, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
+
 	var meshes = [ ]
 
 	var base = node.get_node('.')

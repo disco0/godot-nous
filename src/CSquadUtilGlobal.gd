@@ -3,55 +3,57 @@ extends Node
 #
 # Plugin utility singleton for accessing common functionality.
 #
-# Current plan is:
-# - Make CSquadSettings singleton both a member and a child node
-# - Add dprint base here (or as a loaded script)
-#
+
+
+signal loaded()
+
 
 const plugin_name      := 'csquad-util'
 const plugin_name_ui   := 'CSquadUtil'
 const plugin_path      := "res://addons/" + plugin_name
 const DEFAULT_FGD_PATH := "res://addons/qodot/game-definitions/fgd/qodot_fgd.tres"
 
-var DPRINT: DebugPrint = preload('./util/logger.gd').new()
-
-var plugin: EditorPlugin
+var dprint := dprint_for(self, Colorful.RED_BRIGHT)
 
 var Settings := CSquadUtilSettings.new()
-var Extractors := EntityMeshExtractors.new()
-
-var _settings_node_path: NodePath
-var fgd: QodotFGDFile = preload(DEFAULT_FGD_PATH)
-
+var _settings_node_path := NodePath('Settings')
+var NavGenerator = Engine.get_singleton('NavigationMeshGenerator')
+var Exporter
+var plugin: EditorPlugin
+var editor: EditorInterface
 var _loaded := false
+onready var Extractors := EntityMeshExtractors.new()
+onready var fgd: QodotFGDFile = preload(DEFAULT_FGD_PATH)
 
-var NavGenerator = Engine.get_singleton(
-	'NavigationMeshGenerator'
-		if Engine.get_version_info().hex >= 0x030500
-	else 'EditorNavigationMeshGenerator' )
-
-#func _init
-#var _extractors
-#var extractors := Extractors
 
 func _init() -> void:
-	pass
+	dprint.write('', 'on:init')
 
-func _ready() -> void:
-	_loaded = true
-	pass
 
 func _enter_tree() -> void:
+	dprint.write('', 'on:enter-tree')
 	add_child(Settings, true)
 	for node in get_children():
 		if node is CSquadUtilSettings:
 			_settings_node_path = get_path_to(node)
-			break
-	pass
+
+
+func _ready() -> void:
+	_loaded = true
+	emit_signal('loaded')
+	dprint.write('', 'on:ready')
+	Exporter = load('res://addons/csquad-util/src/ObjExporter.gd').new()
+
 
 func _exit_tree() -> void:
-	pass
+	dprint.write('', 'on:exit-tree')
+
+
+func register_plugin_instance(instance: EditorPlugin) -> void:
+	plugin = instance
+	editor = plugin.get_editor_interface()
+
 
 # Main dprint constructor interface
-func dprint_for(obj) -> DebugPrint.Base:
-	return DPRINT.Builder.get_for(obj)
+static func dprint_for(obj, base_color = preload('./util/logger.gd').DEFAULT_COLORS.BASE) -> DebugPrint.Base:
+	return preload('./util/logger.gd').Builder.get_for(obj, null, base_color)

@@ -1,12 +1,12 @@
+tool
 class_name ObjBuilderManager
 extends Node
-tool
 
 var dprint := CSquadUtil.dprint_for(self)
 
 #const ObjBuilderContainerResPath = plugin_path + '/src/ui/ObjBuilder3DMenu.tscn'
 const ObjBuilder3DMenuRes := preload('./ui/ObjBuilder3DMenu.tscn')
-const ObjEntityDocRes     := preload('res://addons/csquad-util/src/ui/ObjEntityDock/ObjEntityDock.tscn')
+const ObjEntityDocRes     := preload('./ui/ObjEntityDock/ObjEntityDock.tscn')
 
 var plugin:  EditorPlugin
 var ui_3d:   ObjBuilder3DMenu
@@ -20,7 +20,13 @@ func _init(plugin: EditorPlugin, ui_3d := ObjBuilder3DMenuRes.instance(), start_
 	dprint.write('', 'on:init')
 	last_event_stage = 'INIT'
 
-	self.plugin = plugin
+	# Handle refreshes
+	if not is_instance_valid(self.plugin):
+		if is_instance_valid(plugin):
+			self.plugin = plugin
+		else:
+			self.plugin = CSquadUtil.plugin
+
 	self.ui_3d = ui_3d
 	self.ui_visible_start = start_visible
 	self.ui_dock = ObjEntityDocRes.instance()
@@ -67,18 +73,19 @@ func unload():
 	dprint.write('', 'unload')
 
 	var _plugin = plugin if is_instance_valid(plugin) else CSquadUtil.plugin
-	if is_instance_valid(_plugin):
-		push_error('ObjBuilderManager.unload >> plugin member is not a valid instance, failed to access global plugin reference.')
+	if not is_instance_valid(_plugin):
+		dprint.error('plugin member is not a valid instance, failed to access global plugin reference.', 'unload')
 
-	if is_instance_valid(ui_3d):
-		ui_3d.queue_free()
-		plugin.remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, ui_3d)
+	else:
+		if is_instance_valid(ui_3d):
+			ui_3d.queue_free()
+			plugin.remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, ui_3d)
 
-	if is_instance_valid(ui_dock):
-		ui_dock.queue_free()
-		plugin.remove_control_from_docks(ui_dock)
+		if is_instance_valid(ui_dock):
+			ui_dock.queue_free()
+			plugin.remove_control_from_docks(ui_dock)
 
-	plugin = null
+		plugin = null
 
 	#if is_instance_valid(builder):
 	#	builder = null

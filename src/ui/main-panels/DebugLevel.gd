@@ -1,2 +1,2 @@
-extends VBoxContainer
 tool
+extends VBoxContainer

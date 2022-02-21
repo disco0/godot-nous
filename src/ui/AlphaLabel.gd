@@ -1,6 +1,6 @@
+tool
 class_name AlphaLabel
 extends Label
-tool
 
 #
 # Extended form of Label that updates the font color with transparent variation

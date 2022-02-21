@@ -1,12 +1,12 @@
 tool
-class_name WeaponMeshExtractor
+class_name CarMeshExtractor
 extends EntityMeshExtractor
 
 func get_class() -> String:
-	return 'WeaponMeshExtractor'
+	return 'CarMeshExtractor'
 
 func can_target(node: Node) -> bool:
-	return node.name.begins_with('P_') or "_Ammo_" in node.name
+	return node.name.begins_with('Car')
 
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():

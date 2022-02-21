@@ -57,3 +57,5 @@ func register_extractors() -> void:
 	register(CivilianMeshExtractor)
 	register(NemesisBasedMeshExtractor)
 	register(WeaponMeshExtractor)
+	register(PropMeshExtractor)
+	register(CarMeshExtractor)

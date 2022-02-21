@@ -1,11 +1,12 @@
+tool
 class_name TrenchBroomGameFolder
 
 const MODELS_LEAF     := 'models'
 const MODELS_TEX_LEAF := MODELS_LEAF + '/textures'
 
-var models_dir:     String setget, _get_models_dir
-var models_tex_dir: String setget, _get_models_tex_dir
-var textures_dir:   String setget, _get_textures_dir
+var models_dir:     String setget, get_models_dir
+var models_tex_dir: String setget, get_models_tex_dir
+var textures_dir:   String setget, get_textures_dir
 var path:           String setget _set_path
 
 
@@ -47,20 +48,23 @@ func path_to(child_path: String) -> String:
 
 
 func _to_string() -> String:
+	if typeof(path) != TYPE_STRING or path.empty():
+		push_error('TrenchBroomGameFolder._to_string >> path not defined, or empty string')
+
 	return path
 
 
-func _get_textures_dir() -> String:
+func get_textures_dir() -> String:
 	return path.plus_file('textures')
 
 
-func _get_models_tex_dir() -> String:
+func get_models_tex_dir() -> String:
 	return path.plus_file(MODELS_TEX_LEAF)
 
 
-func _get_models_dir() -> String:
+func get_models_dir() -> String:
 	return path.plus_file('models')
 
 
 func _set_path(value: String) -> void:
-	path = ProjectSettings.globalize_path(value)
+	path = ProjectSettings.globalize_path(value.simplify_path())

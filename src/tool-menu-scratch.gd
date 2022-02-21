@@ -1,5 +1,5 @@
-extends EditorScript
 tool
+extends EditorScript
 
 var dprint := CSquadUtil.dprint_for('tool-menu-scratch')
 
@@ -11,7 +11,62 @@ func _run() -> void:
 var plugin: EditorPlugin
 func _init(plugin: EditorPlugin):
 	self.plugin = plugin
-	FGDSearchTests.new().run()
+
+	packed_scene_test()
+
+
+#section PackedScene Search
+
+func packed_scene_test():
+	var test_scene = CSquadUtil.fgd.get_fgd_classes()[10].scene_file
+
+	var scene_data := PackedSceneData.new(test_scene)
+	var data := scene_data.data
+	var node_count := data.get_node_count()
+	for idx in node_count:
+		var node_type_str := data.get_node_type(idx)
+		#if data.get_node_type(idx).empty():
+		#	continue
+		dprint.write('[%s] %s' % [
+			"<PACKED>" if scene_data.is_packed_scene(idx) else node_type_str,
+			('%s' % [ data.get_node_path(idx) ]).plus_file(data.get_node_name(idx)),
+		], 'scene')
+
+class PackedSceneData:
+	var excluded_extensions = ["godot","import", "png","mesh"]
+	var type_whitelist := [
+		Mesh,
+		Material,
+		Texture
+	]
+
+	var data: SceneState
+
+	func _init(packed: PackedScene):
+		data = packed.get_state()
+
+	func is_packed_scene(node_idx: int) -> bool:
+		return data.get_node_type(node_idx).empty()
+
+class PackedSceneChild:
+	var root: PackedSceneData
+	var base_path := ""
+	var scene: PackedScene
+	var type_whitelist_override := [ ]
+	var data: SceneState
+
+	func _init(packed_scene: PackedScene, path, root: PackedSceneData):
+		self.scene = packed_scene
+		self.root = root
+		self.base_path = path
+		self.data = packed_scene.get_state()
+
+
+func is_one_of_types(object, types):
+	for type in types:
+		if object is type:
+			return true
+	return false
 
 #section FGD Search
 

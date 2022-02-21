@@ -8,6 +8,7 @@ var fgd_class: QodotFGDPointClass
 var scene: PackedScene
 var scene_path: String setget , get_scene_path
 var extractor: EntityMeshExtractor
+var _instance: Node
 
 
 func _init(fgd_class: QodotFGDPointClass, extractor = null):
@@ -16,7 +17,9 @@ func _init(fgd_class: QodotFGDPointClass, extractor = null):
 	if is_instance_valid(extractor) and extractor is EntityMeshExtractor:
 		self.extractor = extractor
 	else:
-		self.extractor = CSquadUtil.Extractors.get_extractor_for_node(fgd_class.scene_file.instance())
+		_instance = fgd_class.scene_file.instance()
+		self.extractor = CSquadUtil.Extractors.get_extractor_for_node(_instance)
+
 
 
 func set_fgd_class(fgd: QodotFGDPointClass):

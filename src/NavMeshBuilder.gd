@@ -7,6 +7,15 @@ tool
 # Originally planned to replace deep scene cloning with (Editor|)NavigationMeshGenerator's group based
 # method, but in its current form it breaks on beyond smaller test maps-until that's fully
 # functioning (a refined version of) the older method will remain.
+#
+# @TODO: Moving into Godot 3.5 make sure to set Navigation's cell_size to whatever was used to
+#        generate the mesh-not 100% on what that means yet but here's the error:
+#
+#     sync: Attempted to merge a navigation mesh triangle edge with another already-merged edge.
+#           This happens when the Navigation's `cell_size` is different from the one used to
+#           generate the navigation mesh. This will cause navigation problem.
+#      - <C++ Source>  modules/navigation/nav_map.cpp:639 @ sync()
+#
 
 var dprint := CSquadUtil.dprint_for(self)
 

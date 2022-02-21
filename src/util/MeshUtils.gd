@@ -1,3 +1,4 @@
+tool
 class_name MeshUtils
 
 #
@@ -7,12 +8,16 @@ class_name MeshUtils
 const MESH_UV_TRANSFORM := Vector2(1.0, -1.0)
 const MESH_UV_TRANSFORM_OFFSET := Vector2(0.0, 1.0)
 
-static func process_mesh(mesh: Mesh, offset: Vector3, scale_factor: float, flip_uv := true) -> void:
+static func ProcessMesh(mesh: Mesh, offset: Vector3, scale_factor: float, flip_uv := true) -> void:
 	var mdt = MeshDataTool.new()
-	
+
+	# Handle CSG meshes
+	if mesh is PrimitiveMesh:
+		mesh = PrimativeToArrayMesh(mesh)
+
 	# Will only work with 1 surface for now
 	mdt.create_from_surface(mesh, 0)
-	
+
 	# Step through every vertex of the surface
 	for i in range(mdt.get_vertex_count()):
 		# Multiply position and normal by scale to apply scaling
@@ -21,7 +26,14 @@ static func process_mesh(mesh: Mesh, offset: Vector3, scale_factor: float, flip_
 		# Was required for proper texture mapping initial Player obj generation
 		if flip_uv:
 			mdt.set_vertex_uv(i, (mdt.get_vertex_uv(i) * MESH_UV_TRANSFORM) + MESH_UV_TRANSFORM_OFFSET)
-	
+
 	# Remove original mesh
 	mesh.surface_remove(0)
 	mdt.commit_to_surface(mesh)
+
+static func PrimativeToArrayMesh(csg: PrimitiveMesh) -> ArrayMesh:
+	var arr_mesh := ArrayMesh.new()
+
+	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, csg.get_mesh_arrays())
+
+	return arr_mesh

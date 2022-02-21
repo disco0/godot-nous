@@ -1,6 +1,6 @@
+tool
 class_name ObjBuilder
 extends Node
-tool
 
 var dprint := CSquadUtil.dprint_for(self)
 
@@ -87,7 +87,7 @@ func export_scene_to_obj(scene: Node, out_path = null) -> void:
 
 	# Scale meshes (moved from ObjExport, still not 100% on where this should be in the process)
 	for info in mesh_info_array:
-		MeshUtils.process_mesh(info[MESHINFO.MESH], info[MESHINFO.OFFSET], CSquadUtil.Settings.scale_factor)
+		MeshUtils.ProcessMesh(info[MESHINFO.MESH], info[MESHINFO.OFFSET], CSquadUtil.Settings.scale_factor)
 
 	obj_exporter.save_meshes_to_obj(mesh_info_array, scene.get_tree().edited_scene_root.filename.get_file().get_basename()) # , out_path)
 

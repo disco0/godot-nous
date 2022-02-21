@@ -10,6 +10,7 @@ var dprint := CSquadUtil.dprint_for(self)
 
 
 const DEFAULT_FGD := preload('res://addons/qodot/game-definitions/fgd/qodot_fgd.tres')
+const VERBOSE := false
 
 var fgd: QodotFGDFile
 var point_ents: Dictionary = { } # Record<String, FGDEntityObjectData>
@@ -38,35 +39,34 @@ func collect_entity_scenes() -> void:
 	var last_failed
 	for key_idx in keys_count:
 		var key: String = keys[key_idx]
-		dprint.write('[%03d/%03d] -> %s' % [ key_idx + 1, keys_count, key ], 'collect_entity_scenes')
+		if VERBOSE: dprint.write('[%03d/%03d] -> %s' % [ key_idx + 1, keys_count, key ], 'collect_entity_scenes')
 
 		var ent_def := ent_defs[key] as QodotFGDPointClass
 		if not is_instance_valid(ent_def):
-			dprint.warn('[Not QodotFGDPointClass]', 'collect_entity_scenes')
+			#dprint.warn('[Not QodotFGDPointClass]', 'collect_entity_scenes')
 			continue
 
-		var ent_name: String = ent_def.classname
-
-		if typeof(ent_name) != TYPE_STRING:
+		if typeof(ent_def.classname) != TYPE_STRING:
 			dprint.warn('[WARNING] FGD entity has no classname.', 'collect_entity_scenes')
 			continue
 		elif not is_instance_valid(ent_def.scene_file):
-			dprint.warn('Missing scene_file member in entity definition: %s' % [ ent_name ], 'collect_entity_scenes')
+			dprint.warn('Point entity %s has no scene_file' % [ ent_def.classname ], 'collect_entity_scenes')
 			continue
 		elif not ent_def.scene_file.can_instance():
-			dprint.warn('Cannot instance fgd entity definition: %s' % [ ent_name ], 'collect_entity_scenes')
+			dprint.warn('Point entity %s contains non-instanceable scene_file: %s' % [ ent_def.classname, ent_def.scene_file ], 'collect_entity_scenes')
 			continue
 
 		var ent_data := FGDEntityObjectData.new(ent_def)
 		if ent_data is FGDEntityObjectData:
-			point_ents[ent_name] = ent_data
+			point_ents[ent_def.classname] = ent_data
 		else:
 			last_failed = ent_data
 
-	if last_failed:
-		dprint.write('Inspecting last failed item in definition list', 'collect_entity_scenes')
-		CSquadUtil.plugin.get_editor_interface().inspect_object(last_failed)
 	return
+
+	#if last_failed:
+	#	dprint.write('Inspecting last failed item in definition list', 'collect_entity_scenes')
+	#	CSquadUtil.plugin.get_editor_interface().inspect_object(last_failed)
 
 	# Debug print for now
 	var idx := 0

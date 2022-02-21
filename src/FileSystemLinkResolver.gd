@@ -1,6 +1,6 @@
+tool
 class_name FileSystemLinkResolver
 extends Reference
-tool
 
 #const exec_cmd = 'CMD.exe'
 #

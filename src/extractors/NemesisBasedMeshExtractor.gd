@@ -1,14 +1,19 @@
 tool
-class_name NemesisBasedMeshExtractor extends EntityMeshExtractor
+class_name NemesisBasedMeshExtractor
+extends EntityMeshExtractor
+
+func get_class() -> String:
+	return 'NemesisBasedMeshExtractor'
 
 func _init() -> void:
-	set_name('NemesisBasedMeshExtractor')
+	set_name(get_class())
 
 func can_target(node: Node) -> bool:
 	return FindNemesisNode(node) is Spatial
 
 func resolve_meshes(node: Node = target) -> Array:
-	dprint.write('Resolving meshes, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
+	if node.is_inside_tree():
+		dprint.write('Resolving meshes, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
 	var meshes = [ ]
 
 	var base = node.get_node(SkeletonNodeLeafPath)

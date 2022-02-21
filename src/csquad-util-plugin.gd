@@ -1,16 +1,18 @@
-extends EditorPlugin
 tool
+extends EditorPlugin
 
-onready var plugin := self
-
-const plugin_name    := 'csquad-util'
-const plugin_ui_name := 'CSquadUtil'
-const plugin_path := "res://addons/" + plugin_name
-
-var dprint := preload("res://addons/csquad-util/src/util/logger.gd").Builder.get_for(self)
 
 const MAIN_PANEL_ENABLED         := false
 const HANDLES_DUMP_OBJ_PREVIEW   := true
+
+
+var plugin := self
+const plugin_name    := 'csquad-util'
+const plugin_ui_name := 'CSquadUtil'
+const plugin_path    := "res://addons/" + plugin_name
+
+var dprint := preload("./util/logger.gd").Builder.get_for(self)
+
 const MainPanelRes               := preload("./ui/MainPanel.tscn")
 #const NavMeshBuilderContainerPath := plugin_path + '/src/ui/NavMeshBuilderContainer.tscn'
 const NavMeshBuilderContainerRes := preload('./ui/NavMeshBuilderContainer.tscn')
@@ -20,6 +22,7 @@ var main_panel_instance:     Control
 var last_scratch_instance:   EditorScript
 var objbuild:                ObjBuilderManager # := load('res://addons/csquad-util/src/ObjBuilder3DMenuRes.gd').new(self)
 var nav:                     NavManager        # := NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
+var export_obj_tool:         SceneObjBuilderMenuTool
 
 var handled            := weakref(null)
 var active_main_screen := ""
@@ -31,12 +34,6 @@ func _init() -> void:
 	last_event_stage = 'INIT'
 
 
-func _ready() -> void:
-	dprint.write('', 'on:ready')
-	last_event_stage = 'READY'
-	dprint.write('Initializing input values', 'on:ready')
-
-
 func _enter_tree() -> void:
 	dprint.write('', 'on:enter-tree')
 	last_event_stage = 'IN-TREE'
@@ -44,13 +41,20 @@ func _enter_tree() -> void:
 	# Load singleton
 	add_autoload_singleton('CSquadUtil', 'res://addons/csquad-util/src/CSquadUtilGlobal.gd')
 	if not CSquadUtil._loaded:
-		dprint.write('[Begin] yield(CSquadUtil, "ready")', 'on:enter-tree')
+		dprint.write('Awaiting CSquadUtil ready', 'on:enter-tree')
 		yield(CSquadUtil, "ready")
-		dprint.write('[End]   yield(CSquadUtil, "ready")', 'on:enter-tree')
-	CSquadUtil.plugin = self
+		dprint.write(' -> CSquadUtil ready', 'on:enter-tree')
 
-	nav      = NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
+	dprint.write('Passing plugin to singleton', 'on:enter-tree')
+	CSquadUtil.register_plugin_instance(self)
+
+	nav = NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
 	objbuild = ObjBuilderManager.new(self)
+	CSquadUtil.add_child(objbuild)
+
+	export_obj_tool = SceneObjBuilderMenuTool.new(self)
+	CSquadUtil.add_child(export_obj_tool)
+	export_obj_tool.register_plugin_init()
 
 	if MAIN_PANEL_ENABLED:
 		dprint.write('Adding main panel', 'on:enter-tree')
@@ -60,10 +64,17 @@ func _enter_tree() -> void:
 		#Hide the main panel. Very much required.
 		main_panel_instance.make_visible(false)
 
-
-	add_tool_menu_item('Run CSquadUtil Script', self, 'run_scratch_script')
+	add_tool_menu_item('Run CSquadUtil Scratch Script', self, 'run_scratch_script')
 
 	_init_main_screen_checker()
+
+
+func _ready() -> void:
+	dprint.write('', 'on:ready')
+	last_event_stage = 'READY'
+	# Get plugin instance
+	#var plugin_node := get_tree().root.get_node(plugin_ui_name)
+	#plugin_node.add_child(export_obj_tool)
 
 
 func _exit_tree() -> void:
@@ -74,7 +85,12 @@ func _exit_tree() -> void:
 		if main_panel_instance:
 			main_panel_instance.queue_free()
 
-	remove_tool_menu_item('Run CSquadUtil Script')
+	if export_obj_tool:
+		export_obj_tool.queue_free()
+
+	remove_tool_menu_item('Run CSquadUtil Scratch Script')
+
+	self.queue_free()
 
 
 func enable_plugin() -> void:
@@ -156,7 +172,7 @@ func edit(object: Object) -> void:
 
 
 func run_scratch_script(_arg):
-	last_scratch_instance = load('res://addons/csquad-util/src/tool-menu-scratch.gd').new(plugin)
+	last_scratch_instance = ResourceLoader.load('res://addons/csquad-util/src/tool-menu-scratch.gd', "", false).new(plugin)
 
 
 #region Main Screen Changes
@@ -264,3 +280,13 @@ func handles_debug(object: Node) -> void:
 		dprint.write("@%s has no parent node." % [ object ], 'handles')
 
 #endregion Debugging
+
+
+# @TODO: Put this in its own separate node
+func _input(event):
+	if event is InputEventKey:
+		if event.pressed:
+			if event.scancode == KEY_F7:
+				print("\n\n")
+				run_scratch_script(null)
+				print("\n\n")

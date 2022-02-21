@@ -1,6 +1,13 @@
 tool
 class_name DebugPrint
 
+const Options := { "USE_COLORFUL_CONSOLE": true }
+
+const DEFAULT_COLORS := {
+	BASE    = Colorful.GREEN,
+	CONTEXT = Colorful.GREEN,
+}
+
 # Based on logger implementation in Zylann's hterrain plugin
 # https://github.com/Zylann/godot_heightmap_plugin/blob/master/addons/zylann.hterrain/util/logger.gd
 
@@ -12,8 +19,9 @@ class Base:
 
 	var base_context := ""
 
-	func _init(p_base_context):
+	func _init(p_base_context, context_color = DEFAULT_COLORS.BASE):
 		base_context = p_base_context
+		colors.context = context_color
 
 	# (For Verbose impl)
 	func debug(message: String, ctx := ""):
@@ -27,10 +35,51 @@ class Base:
 
 	# Becuase `log` is not a legal literal and there's no callable instances
 	func write(message: String, ctx := ""):
-		print(ApplyTemplate(self, ctx, message))
+		if Options.USE_COLORFUL_CONSOLE:
+			PrintStyled(self, ctx, message)
+		else:
+			print(ApplyTemplate(self, ctx, message))
 
 
-	const Template := "{0}[{1}{2}] {3}"
+	const Template      := "{0}[{1}{2}] {3}"
+	const ColorTemplate := "%s%s%s[%s]%s %s%s"
+
+	var colors := {
+		base    = DEFAULT_COLORS.BASE,
+		context = DEFAULT_COLORS.CONTEXT
+	}
+
+	static func PrintStyled(logger: Base, context: String, body: String, timestamp := true) -> void:
+
+		for pair in [
+				[ Colorful.BLACK_BRIGHT, (TimestampPrefix() if timestamp == true else "") ],
+				[ logger.colors.base, '['],
+				[ logger.colors.context, logger.base_context],
+				[ logger.colors.base, "%s%s" % [
+						(":" + context if context != "" else ""), ']' ] ],
+				[ ("%s%s" % [ Colorful.ESCAPE, Colorful.COLOR_RESET ]), "" if body.empty() else (" " + body) ], ]:
+			if pair[0]: Colorful.set_color(pair[0])
+			if pair[1]: printraw(pair[1])
+
+		printraw("%s%s\n" % [ Colorful.ESCAPE, Colorful.COLOR_RESET ])
+
+
+		# ("%s%s" % [ Colorful.ESCAPE, Colorful.COLOR_RESET ])
+		# body
+		# ("%s%s" % [ Colorful.ESCAPE, Colorful.COLOR_RESET ])
+		# print(ColorTemplate % [
+		# 		Colorful.BLACK_BRIGHT,
+		# 		(TimestampPrefix() if timestamp == true else ""),
+		# 		logger.colors.base,
+		# 		(logger.colors.context
+		# 			+ logger.base_context
+		# 			+ logger.colors.base
+		# 			+ (":" + context if context != "" else "")),
+		# 		("%s%s" % [ Colorful.ESCAPE, Colorful.COLOR_RESET ]),
+		# 		body,
+		# 		("%s%s" % [ Colorful.ESCAPE, Colorful.COLOR_RESET ])
+		# ])
+
 
 	# Main log building function for logging methods
 	static func ApplyTemplate(logger: Base, context: String, body: String, timestamp := true) -> String:
@@ -46,18 +95,21 @@ class Base:
 		var dt = OS.get_datetime()
 		return (TIMESTAMP_FORMAT + " - ") % [dt.hour, dt.minute, dt.second]
 
-	func extend(context):
-		return Builder.get_for(context, self)
+	func extend(context, context_color = null):
+		if context_color:
+			return Builder.get_for(context, self, context_color)
+		else:
+			return Builder.get_for(context, self)
 
 class Verbose extends Base:
-	func _init(pbase_context: String).(pbase_context):
+	func _init(pbase_context: String, context_color = null).(pbase_context, context_color):
 		pass
 
 	func debug(message: String, ctx := ""):
 		print(ApplyTemplate(self, ctx, message.insert(0, PREFIXES.DEBUG)))
 
 class Builder:
-	static func get_for(context, parent: Base = null) -> Base:
+	static func get_for(context, parent: Base = null, context_color: String = DEFAULT_COLORS.BASE) -> Base:
 		# Note: don't store the owner. If it's a Reference, it could create a cycle
 		var context_str: String
 		match typeof(context):
@@ -82,5 +134,5 @@ class Builder:
 			context_str = context_str.insert(0, parent.base_context + ':')
 
 		if OS.is_stdout_verbose():
-			return Verbose.new(context_str)
-		return Base.new(context_str)
+			return Verbose.new(context_str, context_color)
+		return Base.new(context_str, context_color)

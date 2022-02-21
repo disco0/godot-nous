@@ -4,7 +4,7 @@ extends Node
 
 signal settings_change(value, setting_name)
 
-var dprint := preload('./util/logger.gd').Builder.get_for(self)
+var dprint := preload('./util/logger.gd').Builder.get_for(self, null, Colorful.PURPLE_BRIGHT)
 
 
 const setting_file : = "settings.cfg"
@@ -52,18 +52,17 @@ func _init():
 
 
 func _enter_tree() -> void:
-	# dprint.write('', 'on:enter-tree')
+	dprint.write('', 'on:enter-tree')
 	pass
 
 
 func _ready() -> void:
-	# dprint.write('', 'on:ready')
+	dprint.write('', 'on:ready')
 	if config_file.load(get_settings_path()) == OK:
 		debug        = config_file.get_value("settings", "debug", debug)
 		auto_log     = config_file.get_value("settings", "auto_log", auto_log)
 		scale_factor = config_file.get_value("settings", "scale_factor", scale_factor)
 		game_dir     = config_file.get_value("settings", "game_dir", game_dir)
-
 	else:
 		config_file.save(get_settings_path())
 
@@ -75,7 +74,8 @@ func _ready() -> void:
 		config_file.save(get_settings_path())
 
 	# Initialize tb game folder
-	set_game_dir(game_dir)
+	dprint.write('Setting tb_game_dir', 'on:ready')
+	_update_tb_game_dir()
 
 	_loaded = true
 
