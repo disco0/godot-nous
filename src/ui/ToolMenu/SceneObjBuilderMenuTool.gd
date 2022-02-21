@@ -162,8 +162,8 @@ func export_current_scene_to_obj():
 
 func _on_export_complete():
 	dprint.write('Export complete.', 'on:export-complete')
-	DisconnectIfConnected(exporter, "export_completed", self, "_on_export_complete")
-	DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
+	SignalUtil.DisconnectIfConnected(exporter, "export_completed", self, "_on_export_complete")
+	SignalUtil.DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
 	disconnect_prompt()
 	disconnect_exporter_progress()
 
@@ -198,25 +198,18 @@ func _on_prompt_visiblity_change() -> void:
 	root_node = null
 
 
-func DisconnectIfConnected(obj: Object, obj_signal: String, target, target_method: String) -> void:
-	if obj and target:
-		if obj.is_connected(obj_signal, target, target_method):
-			dprint.write('(%s).%s disconnecting from %s@%s' % [ target.get_name(), target_method, obj, obj_signal])
-			obj.disconnect(obj_signal, target, target_method)
-
-
 func disconnect_exporter_progress() -> void:
 	dprint.write('', 'disconnect_exporter_progress')
-	DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
-	DisconnectIfConnected(exporter, "export_progress", progress, "_update_progress")
+	SignalUtil.DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
+	SignalUtil.DisconnectIfConnected(exporter, "export_progress", progress, "_update_progress")
 
 
 func disconnect_prompt() -> void:
 	dprint.write('', 'disconnect_prompt')
-	DisconnectIfConnected(prompt, 'confirmed', self, "_on_prompt_confirmed")
-	DisconnectIfConnected(prompt, 'dir_selected', self, "_on_dir_selected")
-	DisconnectIfConnected(prompt, "popup_hide", self, "_on_prompt_confirmed")
-	DisconnectIfConnected(prompt, 'visibility_changed', self, "_on_prompt_visiblity_change")
+	SignalUtil.DisconnectIfConnected(prompt, 'confirmed', self, "_on_prompt_confirmed")
+	SignalUtil.DisconnectIfConnected(prompt, 'dir_selected', self, "_on_dir_selected")
+	SignalUtil.DisconnectIfConnected(prompt, "popup_hide", self, "_on_prompt_confirmed")
+	SignalUtil.DisconnectIfConnected(prompt, 'visibility_changed', self, "_on_prompt_visiblity_change")
 
 
 func _on_prompt_confirmed():
@@ -274,8 +267,8 @@ func init_progress() -> void:
 	dprint.write('Created export progress window', 'init_progress')
 
 
-func _update_progress(m_idx, s_idx, vert_pct, mesh_total):
-	progress._update_progress(m_idx, s_idx, vert_pct, mesh_total)
+func _update_progress(m_idx, s_idx, vert_idx, vert_total, mesh_total):
+	progress._update_progress(m_idx, s_idx, vert_idx, vert_total, mesh_total)
 
 
 func _init_outdir_window():

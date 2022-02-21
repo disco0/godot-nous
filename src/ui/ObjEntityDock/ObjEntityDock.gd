@@ -5,19 +5,18 @@ extends Control
 
 var dprint := CSquadUtil.dprint_for(self)
 
-
 const MESHINFO = ObjBuilder.MESHINFO
 
-
-onready var item_tree := $VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree as ObjBuilderEntityTree
-onready var headers_box := $VBoxContainer/Headers as HSplitContainer
-onready var fgd_button := $VBoxContainer/OpenFGDResButton
-onready var models_button := $VBoxContainer/OpenFolderButton
-onready var build_button := $VBoxContainer/HBoxContainer/BuildButton
-onready var update_entity_paths_button := $VBoxContainer/HBoxContainer/UpdateFGDModelPaths
+onready var item_tree: ObjBuilderEntityTree = $VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree
+onready var headers_box: HSplitContainer = $VBoxContainer/Headers
+onready var fgd_button: Button = $VBoxContainer/OpenFGDResButton
+onready var models_button: Button = $VBoxContainer/OpenFolderButton
+onready var build_button: Button = $VBoxContainer/HBoxContainer/BuildButton
+onready var progress: MarginContainer = $VBoxContainer/Progress
+onready var progress_bar: ProgressBar = $VBoxContainer/Progress/Bar
+onready var progress_text: Label = $VBoxContainer/Progress/Text
+onready var update_entity_paths_button: Button = $VBoxContainer/HBoxContainer/UpdateFGDModelPaths
 onready var exporter: ObjExporter = $Proc/ObjExporter
-# For storing indicies each header
-onready var headers: Array setget, get_header_labels
 
 
 # @TODO: Move this to setting_changed signal instead of reading it every time
@@ -34,7 +33,7 @@ func _ready() -> void:
 	dprint.write('', 'on:ready')
 	item_tree.build_items()
 
-	# Process buttons
+	progress.visible = false
 
 	models_button.hint_tooltip = "Open %s in OS file manager" % [ CSquadUtil.Settings.tb_game_dir.get_models_dir() ]
 	fgd_button.hint_tooltip = "Open %s in inspector panel" % [ CSquadUtil.fgd.resource_path ]
@@ -68,15 +67,6 @@ func _on_OpenFolderButton_pressed() -> void:
 	var g_output_dir = ProjectSettings.globalize_path(self.output_dir)
 	if dir.dir_exists(g_output_dir):
 		OS.shell_open(g_output_dir)
-
-
-func _update_theme() -> void:
-	if (!Engine.editor_hint || !is_inside_tree()):
-		return
-
-
-func get_header_labels() -> Array:
-	return $VBoxContainer/Headers.get_children()
 
 
 func _on_ObjBuilderEntityTree_item_activated():
@@ -135,6 +125,8 @@ func _on_OpenFGDResButton_pressed() -> void:
 # Updates `model` meta-properties on entities
 #
 func _on_UpdateFGDModelPaths_pressed() -> void:
+	var dir: Directory = Directory.new()
+
 	# Array of last generated ent_infos should be fine for this
 	var entinfos := item_tree.collect_checked_ent_infos()
 	if entinfos.empty():
@@ -164,13 +156,18 @@ func _on_UpdateFGDModelPaths_pressed() -> void:
 					'on:UpdateFGDModelPathsButton-pressed')
 			continue
 
+		if not dir.file_exists(resource_path):
+			dprint.warn('Resolved resource path for %s not found: %s' % [ entinfo.classname, resource_path ],
+					'on:UpdateFGDModelPathsButton-pressed')
+			continue
+
 		var new_model_path := CSquadUtil.Settings.tb_game_dir.global_to_usemtl(
 					CSquadUtil.Settings.tb_game_dir.models_dir.plus_file(entinfo.classname + '.obj'))
+
 		dprint.write('Updating resource: %s' % [ resource_path ], 'on:UpdateFGDModelPathsButton-pressed')
 		dprint.write(' > New model path: %s' % [ new_model_path ], 'on:UpdateFGDModelPathsButton-pressed')
-		load(resource_path).meta_properties['model'] = {
-			path = new_model_path
-		}
+
+		load(resource_path).meta_properties['model'] = { path = new_model_path }
 
 
 #
@@ -183,22 +180,89 @@ func _on_BuildButton_pressed() -> void:
 		dprint.error('Gathered zero entities to export.', 'on:BuildButton-pressed')
 		return
 
-	# For now, build all the data arrays for exporter at once
+	vert_total = 0
+	# Build all the data arrays for exporter at once to get total vert count
 	var entinfo: FGDEntityObjectData
 	var export_data_arr := [ ]
 	for idx in entinfos.size():
 		entinfo = entinfos[idx]
-		export_data_arr.push_back(EntityExportData.new(entinfo))
+		var export_data := EntityExportData.new(entinfo, true)
+		vert_total += export_data.vert_count
+		export_data_arr.push_back(export_data)
+		dprint.write('Total verts collected %d' % [ vert_total ], 'on:BuildButton-pressed')
 
 	_build_dprint('Built %d export data instances.' % [ export_data_arr.size() ])
 	dump_build_debug_data(export_data_arr)
 
+	# Show output panel and connect signals
+	progress_text.text = ''
+	progress.set_visible(true)
+	progress.update()
+	progress_text.update()
+	progress_bar.update()
+	yield(get_tree().create_timer(exporter.YIELD_DURATION), exporter.YIELD_METHOD)
+	exporter.connect("export_progress", self, '_update_progress_bar')
+
 	var export_data: EntityExportData
-	for export_data_idx in export_data_arr.size():
+	export_count = export_data_arr.size()
+	for export_data_idx in export_count:
+		# Progress bar
+		curr_export_idx = export_data_idx
 		export_data = export_data_arr[export_data_idx]
 
 		dprint.write('Exporting obj for %s' % [ export_data.classname ])
 		exporter.save_meshes_to_obj(export_data.get_mesh_data(), export_data.classname, "", false)
+
+		# Await success or failure
+		yield(exporter, "export_completed")
+
+		# Commit to total
+		vertex_commit += export_data.vert_count
+
+		# Let ui breathe
+		yield(get_tree().create_timer(exporter.YIELD_DURATION), exporter.YIELD_METHOD)
+		progress.propagate_notification(NOTIFICATION_RESIZED)
+
+	exporter.disconnect("export_progress", self, '_update_progress_bar')
+
+
+# Progress bar context vars
+var curr_export_idx := -1
+var export_count := -1
+# Total vert count for all exports
+var vert_total := 0
+# Increased by obj's vert count after finishing (for calculating total progress)
+var vertex_commit := 0
+
+# <TOTAL-VERT-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | Mesh <CURRENT-MESH-NUM>/<TOTAL-MESHES>
+#const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | Mesh %02d/%02d'
+# <TOTAL-VERT-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | <TOTAL-VERTS-PROCESSED>/<TOTAL-VERTS>
+const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | %9d/%d'
+func _update_progress_bar(mesh_idx: int, surface_idx: int, vertex_idx: int, curr_surface_vertex_total: int)-> void:
+
+	if mesh_idx == -1 or surface_idx == -1 or vertex_idx == -1:
+		return
+
+	print('Object verts processed: %d' % [ vertex_idx ])
+	progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
+	#print(progress_bar.get_value())
+	progress_text.set_text(PROGRESS_TEXT_TEMPLATE % [
+		progress_bar.get_value() * 100.0,
+		curr_export_idx + 1,
+		export_count,
+
+		vertex_idx + 1 + vertex_commit,
+		vert_total,
+		#mesh_idx + 1,
+		#curr_export_idx,
+	])
+
+	progress_bar.update()
+	progress_text.update()
+
+
+func _on_export_complete() -> void:
+	progress_text.text = '100% ' + progress_text.text.substr(progress_text.text.find('%') + 1)
 
 
 export (bool) var BUILD_VERBOSE := true
@@ -246,19 +310,15 @@ class EntityExportData:
 
 	var data: FGDEntityObjectData
 	var classname: String setget, get_classname
-	var _mesh_data := []
+	var _mesh_data: Array
 	var mesh_data: Array setget, get_mesh_data
+	var vert_count:= -1
 
 	func get_mesh_data() -> Array:
-		if _mesh_data.empty():
+		if typeof(_mesh_data) == TYPE_NIL or _mesh_data.empty():
 			build_mesh_data()
+
 		return _mesh_data
-	#Array<[
-		#MESH
-		#OVERRIDE
-		#OFFSET
-		#SCALE_FACTOR
-	#]>
 
 	#func get_mesh() -> Mesh:
 	#	return mesh_data[MESHINFO.MESH]
@@ -271,30 +331,29 @@ class EntityExportData:
 
 	func build_mesh_data() -> void:
 		_mesh_data.clear()
-
-		#dprint.write('Resolving mesh data', 'build_mesh_data')
 		_mesh_data = get_extractor().resolve_meshes(data.scene.instance())
-
-		#editor.open_scene_from_path(ent_info.scene.resource_path)
-		#var editor := CSquadUtil.editor
-		#dprint.write('Editing instance %s' % [ instance ], 'on:init')
-		#editor.edit_node(instance)
-
-		# Scale meshes (moved from ObjExport, still not 100% on where this should be in the process)
-		#dprint.write('Processing meshes', 'build_mesh_data')
 
 		for info in _mesh_data:
 			MeshUtils.ProcessMesh(info[MESHINFO.MESH], info[MESHINFO.OFFSET], CSquadUtil.Settings.scale_factor)
 
-	func _init(ent_info: FGDEntityObjectData):
+		# Also update vert count for progress
+		update_vert_count()
+
+	func update_vert_count() -> void:
+		vert_count = 0
+		for info in _mesh_data:
+			var mesh = info[MESHINFO.MESH]
+			for surf_idx in mesh.get_surface_count():
+				vert_count += mesh.surface_get_arrays(surf_idx)[ArrayMesh.ARRAY_VERTEX].size()
+
+	func _init(ent_info: FGDEntityObjectData, build_mesh_data_immediate := true):
 		self.data = ent_info
+		if build_mesh_data_immediate:
+			self.build_mesh_data()
 
 
 func _on_ObjBuilderEntityTree_item_edited() -> void:
 	var edited := item_tree.get_edited()
-	#var col := item_tree.get_edited_column()
-	#if col != item_tree.COLUMNS.BUILD_BUTTON:
-	#	return
 	if edited.is_checked(item_tree.COLUMNS.BUILD_BUTTON):
 		build_button.set_disabled(false)
 		update_entity_paths_button.set_disabled(false)
@@ -309,3 +368,25 @@ func _on_ObjBuilderEntityTree_item_edited() -> void:
 func _on_ObjBuilderEntityTree_button_pressed(item: TreeItem, column: int, id: int) -> void:
 	dprint.write('Pressed: %s{ %s, %s }' % [ item, column, id ], 'on:tree-item-button-pressed')
 
+
+# Some debug signals while I figure out whats not working
+func _on_ObjExporter_export_started(object_name, mesh_count) -> void:
+	pass
+	#  print('Export Started: %s: %d' % [ object_name, mesh_count ])
+
+
+func _on_ObjExporter_export_completed(object_name) -> void:
+	pass
+	#print('Export Completed: %s' % [ object_name ])
+
+
+func _on_ObjExporter_export_progress(mesh_idx: int, surface_idx: int, vertex_idx: int, curr_surface_vertex_total: int) -> void:
+	_update_progress_bar(mesh_idx, surface_idx, vertex_idx, curr_surface_vertex_total)
+	progress.propagate_notification(NOTIFICATION_RESIZED)
+	#print(PROGRESS_TEXT_TEMPLATE % [
+	#	100.0 * ((float(vertex_idx) + float(vertex_commit)) / float(vert_total)),
+	#	curr_export_idx + 1,
+	#	export_count,
+	#	mesh_idx + 1,
+	#	curr_export_idx,
+	#])
