@@ -11,6 +11,12 @@ func get_class() -> String:
 func can_target(node: Node) -> bool:
 	return node.name == 'Player'
 
+var node_whitelist := [
+	"Head_Mesh", "Torso_Mesh",
+	# Shades
+	"Plane001"
+]
+
 var SkeletonNodeLeafPath := 'Body_Mesh/Armature/Skeleton'
 var AnimationPlayerLeafPath := 'Body_Mesh/AnimationPlayer'
 var animation: String = 'Phone'
@@ -38,7 +44,9 @@ func resolve_meshes(node: Node = target) -> Array:
 		return meshes
 
 	# Gonna try it dummy style
-	AllChildMeshes(base, meshes, true, ["Head_Mesh", "Torso_Mesh"])
+	MeshUtils.CollectChildMeshes(base, meshes, true, node_whitelist)
+	dprint.write('Collected %d child meshes' % [ meshes.size() ])
+
 
 	if ANIMATION_SEARCH_OVERRIDE_DISABLED == true:
 		pass

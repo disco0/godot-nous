@@ -170,26 +170,47 @@ func _on_UpdateFGDModelPaths_pressed() -> void:
 		load(resource_path).meta_properties['model'] = { path = new_model_path }
 
 
+# TODO: Make into instanceable class so multiple can be active
+var export_start_time_usec: int = -1
+var export_time_usec: int = -1
+func start_profile(title: String) -> void:
+	if export_start_time_usec != -1:
+		dprint.error('Profiling timer already started', 'stop_profile')
+	export_start_time_usec = Time.get_ticks_usec()
+func stop_profile() -> void:
+	if export_start_time_usec == -1:
+		dprint.error('Profiling timer not started yet', 'stop_profile')
+		return
+	export_time_usec = Time.get_ticks_usec() - export_start_time_usec
+	export_start_time_usec == -1
+
+
 #
 # Batch processing starts/is called from here
 #
 func _on_BuildButton_pressed() -> void:
+	_initialize_progress_bar_state()
+
 	# Array of last generated ent_infos should be fine for this
 	var entinfos := item_tree.collect_checked_ent_infos()
 	if entinfos.empty():
 		dprint.error('Gathered zero entities to export.', 'on:BuildButton-pressed')
 		return
 
-	vert_total = 0
+	indec_total = 0
+	indec_total_digits = 0
 	# Build all the data arrays for exporter at once to get total vert count
 	var entinfo: FGDEntityObjectData
 	var export_data_arr := [ ]
 	for idx in entinfos.size():
 		entinfo = entinfos[idx]
 		var export_data := EntityExportData.new(entinfo, true)
-		vert_total += export_data.vert_count
+		indec_total += export_data.indicies_count
 		export_data_arr.push_back(export_data)
-		dprint.write('Total verts collected %d' % [ vert_total ], 'on:BuildButton-pressed')
+		#dprint.write('Total verts collected %d' % [ vert_total ], 'on:BuildButton-pressed')
+
+	# Store length of vert total in decimal
+	indec_total_digits = str(indec_total).length()
 
 	_build_dprint('Built %d export data instances.' % [ export_data_arr.size() ])
 	dump_build_debug_data(export_data_arr)
@@ -197,12 +218,12 @@ func _on_BuildButton_pressed() -> void:
 	# Show output panel and connect signals
 	progress_text.text = ''
 	progress.set_visible(true)
-	progress.update()
 	progress_text.update()
 	progress_bar.update()
 	yield(get_tree().create_timer(exporter.YIELD_DURATION), exporter.YIELD_METHOD)
 	exporter.connect("export_progress", self, '_update_progress_bar')
 
+	start_profile('Export')
 	var export_data: EntityExportData
 	export_count = export_data_arr.size()
 	for export_data_idx in export_count:
@@ -217,52 +238,100 @@ func _on_BuildButton_pressed() -> void:
 		yield(exporter, "export_completed")
 
 		# Commit to total
-		vertex_commit += export_data.vert_count
+		indec_commit += export_data.indicies_count
 
 		# Let ui breathe
 		yield(get_tree().create_timer(exporter.YIELD_DURATION), exporter.YIELD_METHOD)
 		progress.propagate_notification(NOTIFICATION_RESIZED)
 
+	stop_profile()
+	_on_export_complete(export_time_usec)
 	exporter.disconnect("export_progress", self, '_update_progress_bar')
+
+
+func _initialize_progress_bar_state() -> void:
+	curr_export_idx = -1
+	export_count = -1
+	# Total vert count for all exports
+	indec_total = 0
+	# For dynamic padding
+	indec_total_digits = 1
+	# Increased by obj's vert count after finishing (for calculating total progress)
+	indec_commit = 0
 
 
 # Progress bar context vars
 var curr_export_idx := -1
 var export_count := -1
 # Total vert count for all exports
-var vert_total := 0
+var indec_total := 0
+# For dynamic padding
+var indec_total_digits := 1
 # Increased by obj's vert count after finishing (for calculating total progress)
-var vertex_commit := 0
+var indec_commit := 0
 
 # <TOTAL-VERT-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | Mesh <CURRENT-MESH-NUM>/<TOTAL-MESHES>
 #const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | Mesh %02d/%02d'
-# <TOTAL-VERT-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | <TOTAL-VERTS-PROCESSED>/<TOTAL-VERTS>
-const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | %9d/%d'
-func _update_progress_bar(mesh_idx: int, surface_idx: int, vertex_idx: int, curr_surface_vertex_total: int)-> void:
+# <TOTAL-INDEC-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | <TOTAL-INDEC-PROCESSED>/<TOTAL-INDECS>
+const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | %*d/%d'
+#func _update_progress_bar(mesh_idx: int, surface_idx: int, vertex_idx: int, curr_surface_vert_total: int)-> void:
+func _update_progress_bar(mesh_idx: int, surface_idx: int, indec_idx: int, curr_surface_indec_total: int)-> void:
 
-	if mesh_idx == -1 or surface_idx == -1 or vertex_idx == -1:
+	if mesh_idx == -1 or surface_idx == -1 or indec_idx == -1:
 		return
 
-	print('Object verts processed: %d' % [ vertex_idx ])
-	progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
-	#print(progress_bar.get_value())
-	progress_text.set_text(PROGRESS_TEXT_TEMPLATE % [
-		progress_bar.get_value() * 100.0,
-		curr_export_idx + 1,
-		export_count,
+	#progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
 
-		vertex_idx + 1 + vertex_commit,
-		vert_total,
-		#mesh_idx + 1,
-		#curr_export_idx,
-	])
+	# @TODO: Fully rename variables after testing
+	var vertex_idx := indec_idx
+	var vertex_commit := indec_commit
+	var vert_total := indec_total
+	var vert_total_digits := indec_total_digits
+
+	progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
+	dprint.write('Position: %8d | Curr Index: %8d | Commit: %8d | Total: %8d' % [
+				vertex_idx + vertex_commit,
+				vertex_idx,
+				vertex_commit,
+				vert_total
+			], '_update_progress_bar')
+	progress_text.set_text(PROGRESS_TEXT_TEMPLATE % [
+			# %3.2f%%
+			progress_bar.get_value() * 100.0,
+
+			# Model %02d/%02d
+			curr_export_idx + 1,
+			export_count,
+
+			# %*d/%d
+			vert_total_digits,
+			vertex_idx + vertex_commit,
+			vert_total,
+			#mesh_idx + 1,
+			#curr_export_idx,
+		])
 
 	progress_bar.update()
 	progress_text.update()
 
+	# @TODO Figure out if this is still necessary
+	progress.propagate_notification(NOTIFICATION_RESIZED)
 
-func _on_export_complete() -> void:
-	progress_text.text = '100% ' + progress_text.text.substr(progress_text.text.find('%') + 1)
+
+# Just to make sure its actually at 100% when it should be (in theory)
+func _on_export_complete(export_usec: int = -1) -> void:
+	if export_usec < 1:
+		progress_text.text = '100% ' + progress_text.text.substr(progress_text.text.find('%') + 1)
+	else:
+		var ms := export_time_usec / 1000 % 1000
+		var sec := export_time_usec / 1000 / 1000 % 1000
+		var mins := export_time_usec / 1000 / 1000 / 60 % 60
+		var hours := export_time_usec / 1000 / 1000 / 60 / 60 % 60
+
+		var time_str := "%02d:%02d:%02d.%03d" % [ hours, mins, sec, ms ]
+
+		progress_text.text = '[%s] ' % [ time_str ] \
+			+ progress_text.text.substr(progress_text.text.find('%') + 1)
 
 
 export (bool) var BUILD_VERBOSE := true
@@ -273,6 +342,7 @@ func _build_dprint(msg: String) -> void:
 	dprint.write(msg, 'on:BuildButton-pressed')
 
 
+# Outdated now, moved to indicies
 func dump_build_debug_data(export_data_arr, ctx := 'on:BuildButton-pressed') -> void:
 	if not BUILD_VERBOSE: return
 	var export_data: EntityExportData
@@ -305,14 +375,16 @@ func dump_build_debug_data(export_data_arr, ctx := 'on:BuildButton-pressed') -> 
 
 # Using this kitchen sink class I figure out the best way to pack this
 class EntityExportData:
-	var dprint := CSquadUtil.dprint_for('EntityExportData')
 	const MESHINFO = ObjBuilder.MESHINFO
+
+	var dprint := CSquadUtil.dprint_for('EntityExportData')
 
 	var data: FGDEntityObjectData
 	var classname: String setget, get_classname
 	var _mesh_data: Array
 	var mesh_data: Array setget, get_mesh_data
-	var vert_count:= -1
+	var vert_count := -1
+	var indicies_count := -1
 
 	func get_mesh_data() -> Array:
 		if typeof(_mesh_data) == TYPE_NIL or _mesh_data.empty():
@@ -333,8 +405,12 @@ class EntityExportData:
 		_mesh_data.clear()
 		_mesh_data = get_extractor().resolve_meshes(data.scene.instance())
 
+		# Apply transforms/normalization for various mesh forms
 		for info in _mesh_data:
-			MeshUtils.ProcessMesh(info[MESHINFO.MESH], info[MESHINFO.OFFSET], CSquadUtil.Settings.scale_factor)
+			info[MESHINFO.MESH] = MeshUtils.ProcessMesh(
+					info[MESHINFO.MESH],
+					info[MESHINFO.OFFSET],
+					CSquadUtil.Settings.scale_factor)
 
 		# Also update vert count for progress
 		update_vert_count()
@@ -346,10 +422,24 @@ class EntityExportData:
 			for surf_idx in mesh.get_surface_count():
 				vert_count += mesh.surface_get_arrays(surf_idx)[ArrayMesh.ARRAY_VERTEX].size()
 
+	func update_indicies_count() -> void:
+		vert_count = 0
+		var item_idx := -1
+		for info in _mesh_data:
+			item_idx += 1
+			var mesh = info[MESHINFO.MESH]
+			for surf_idx in mesh.get_surface_count():
+				if mesh.surface_get_arrays(surf_idx)[ArrayMesh.ARRAY_INDEX]:
+					indicies_count += mesh.surface_get_arrays(surf_idx)[ArrayMesh.ARRAY_INDEX].size()
+				else:
+					# Fuck this is why I need to index problem meshes before
+					print('------ No indicies on %s, Mesh %d, Surface %d -------' % [ self.classname, item_idx + 1, surf_idx ])
+
 	func _init(ent_info: FGDEntityObjectData, build_mesh_data_immediate := true):
 		self.data = ent_info
 		if build_mesh_data_immediate:
 			self.build_mesh_data()
+			self.update_indicies_count()
 
 
 func _on_ObjBuilderEntityTree_item_edited() -> void:
@@ -378,15 +468,3 @@ func _on_ObjExporter_export_started(object_name, mesh_count) -> void:
 func _on_ObjExporter_export_completed(object_name) -> void:
 	pass
 	#print('Export Completed: %s' % [ object_name ])
-
-
-func _on_ObjExporter_export_progress(mesh_idx: int, surface_idx: int, vertex_idx: int, curr_surface_vertex_total: int) -> void:
-	_update_progress_bar(mesh_idx, surface_idx, vertex_idx, curr_surface_vertex_total)
-	progress.propagate_notification(NOTIFICATION_RESIZED)
-	#print(PROGRESS_TEXT_TEMPLATE % [
-	#	100.0 * ((float(vertex_idx) + float(vertex_commit)) / float(vert_total)),
-	#	curr_export_idx + 1,
-	#	export_count,
-	#	mesh_idx + 1,
-	#	curr_export_idx,
-	#])

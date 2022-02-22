@@ -134,10 +134,10 @@ func _AllChildMeshes(node: Node, meshes: Array, node_name_whitelist, only_visibl
 			#	dprint.write("Pushing mesh info from node: @%s" % [AllChildMeshes_FormatPath(node) ], '#AllChildMeshes')
 
 			if ACM_in_tree:
-				meshes.push_back(MeshInfoTuple(node.mesh, override, minst.global_transform.origin - AllChildMeshes_origin))
+				meshes.push_back(MeshUtils.MeshInfoTuple(node.mesh, override, minst.global_transform.origin - AllChildMeshes_origin))
 			else:
 				# In its current form this won't be right (to be computed relative to parent), just separating it for now
-				meshes.push_back(MeshInfoTuple(node.mesh, override, minst.transform.origin - AllChildMeshes_origin))
+				meshes.push_back(MeshUtils.MeshInfoTuple(node.mesh, override, minst.transform.origin - AllChildMeshes_origin))
 			AllChildMeshes_mark_seen(minst)
 
 	if node.get_child_count() == 0: return
@@ -195,6 +195,3 @@ func find_node_outside_tree(node: Node, path: String) -> Node:
 
 	return resolved
 
-
-static func MeshInfoTuple(mesh: Mesh, mat: Material, offset := Vector3.ZERO) -> Array:
-	return [mesh.duplicate(), mat, offset]

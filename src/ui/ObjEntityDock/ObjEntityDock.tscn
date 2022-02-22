@@ -123,6 +123,7 @@ margin_bottom = 669.0
 size_flags_horizontal = 3
 
 [node name="Bar" type="ProgressBar" parent="VBoxContainer/Progress"]
+self_modulate = Color( 1, 1, 1, 0.396078 )
 margin_right = 488.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
@@ -130,12 +131,12 @@ size_flags_vertical = 3
 custom_colors/font_color = Color( 0, 0, 0, 0 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0 )
 max_value = 1.0
+value = 0.45
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Text" type="Label" parent="VBoxContainer/Progress"]
-modulate = Color( 1, 1, 1, 0.584314 )
 margin_right = 488.0
 margin_bottom = 14.0
 text = "<Progress>"
@@ -184,5 +185,4 @@ thread_count = 0
 [connection signal="pressed" from="VBoxContainer/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/OpenFGDResButton" to="." method="_on_OpenFGDResButton_pressed"]
 [connection signal="export_completed" from="Proc/ObjExporter" to="." method="_on_ObjExporter_export_completed"]
-[connection signal="export_progress" from="Proc/ObjExporter" to="." method="_on_ObjExporter_export_progress"]
 [connection signal="export_started" from="Proc/ObjExporter" to="." method="_on_ObjExporter_export_started"]
