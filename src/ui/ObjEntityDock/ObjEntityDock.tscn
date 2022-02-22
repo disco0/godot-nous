@@ -26,6 +26,7 @@ __meta__ = {
 }
 
 [node name="TestTargetButton" type="Button" parent="VBoxContainer"]
+visible = false
 margin_right = 488.0
 margin_bottom = 20.0
 text = "Run Test Target"
@@ -34,9 +35,8 @@ __meta__ = {
 }
 
 [node name="ItemButtonToggles" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 24.0
 margin_right = 488.0
-margin_bottom = 44.0
+margin_bottom = 20.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -55,9 +55,9 @@ size_flags_horizontal = 3
 text = "Deselect All"
 
 [node name="FilterLineEdit" type="LineEdit" parent="VBoxContainer"]
-margin_top = 48.0
+margin_top = 24.0
 margin_right = 488.0
-margin_bottom = 72.0
+margin_bottom = 48.0
 clear_button_enabled = true
 placeholder_text = "Filter"
 placeholder_alpha = 0.3
@@ -89,7 +89,7 @@ margin_right = 1277.0
 margin_bottom = 4.0
 
 [node name="EntityTreeScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
-margin_top = 76.0
+margin_top = 52.0
 margin_right = 488.0
 margin_bottom = 621.0
 size_flags_horizontal = 3
@@ -99,7 +99,7 @@ size_flags_vertical = 3
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 488.0
-margin_bottom = 545.0
+margin_bottom = 569.0
 
 [node name="ReloadListButton" type="Button" parent="VBoxContainer"]
 margin_top = 625.0

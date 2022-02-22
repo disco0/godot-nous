@@ -71,6 +71,9 @@ func _on_OpenFolderButton_pressed() -> void:
 
 
 func _on_ObjBuilderEntityTree_item_activated():
+	if not is_instance_valid(item_tree):
+		item_tree = get_node('VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree')
+
 	var root := item_tree.get_root()
 	if not is_instance_valid(root):
 		dprint.warn('No root in Tree.', 'on:Select-All-pressed')
@@ -198,6 +201,13 @@ func _on_BuildButton_pressed() -> void:
 
 	build_objs(entinfos)
 
+
+export (bool) var BUILD_VERBOSE := true
+
+func _build_dprint(msg: String) -> void:
+	if not BUILD_VERBOSE: return
+	dprint.write(msg, 'on:BuildButton-pressed')
+
 func build_objs(entinfos: Array) -> void:
 	_initialize_progress_bar_state()
 
@@ -275,31 +285,14 @@ var indec_total_digits := 1
 # Increased by obj's vert count after finishing (for calculating total progress)
 var indec_commit := 0
 
-# <TOTAL-VERT-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | Mesh <CURRENT-MESH-NUM>/<TOTAL-MESHES>
-#const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | Mesh %02d/%02d'
 # <TOTAL-INDEC-PERCENT-COMPLETE>% | Model <CURRENT-EXPORTED-MODEL-INDEX + 1>/<TOTAL-EXPORTS> | <TOTAL-INDEC-PROCESSED>/<TOTAL-INDECS>
 const PROGRESS_TEXT_TEMPLATE = '%3.2f%% | Model %02d/%02d | %*d/%d'
-#func _update_progress_bar(mesh_idx: int, surface_idx: int, vertex_idx: int, curr_surface_vert_total: int)-> void:
-func _update_progress_bar(mesh_idx: int, surface_idx: int, indec_idx: int, curr_surface_indec_total: int)-> void:
 
+func _update_progress_bar(mesh_idx: int, surface_idx: int, indec_idx: int, curr_surface_indec_total: int)-> void:
 	if mesh_idx == -1 or surface_idx == -1 or indec_idx == -1:
 		return
 
-	#progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
-
-	# @TODO: Fully rename variables after testing
-	var vertex_idx := indec_idx
-	var vertex_commit := indec_commit
-	var vert_total := indec_total
-	var vert_total_digits := indec_total_digits
-
-	progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
-	#dprint.write('Position: %8d | Curr Index: %8d | Commit: %8d | Total: %8d' % [
-	#			vertex_idx + vertex_commit,
-	#			vertex_idx,
-	#			vertex_commit,
-	#			vert_total
-	#		], '_update_progress_bar')
+	progress_bar.set_value((indec_idx + indec_commit) / float(indec_total))
 	progress_text.set_text(PROGRESS_TEXT_TEMPLATE % [
 			# %3.2f%%
 			progress_bar.get_value() * 100.0,
@@ -309,11 +302,9 @@ func _update_progress_bar(mesh_idx: int, surface_idx: int, indec_idx: int, curr_
 			export_count,
 
 			# %*d/%d
-			vert_total_digits,
-			vertex_idx + vertex_commit,
-			vert_total,
-			#mesh_idx + 1,
-			#curr_export_idx,
+			indec_total_digits,
+			indec_idx + indec_commit,
+			indec_total,
 		])
 
 	progress_bar.update()
@@ -328,23 +319,15 @@ func _on_export_complete(export_usec: int = -1) -> void:
 	if export_usec < 1:
 		progress_text.text = '100% ' + progress_text.text.substr(progress_text.text.find('%') + 1)
 	else:
-		var ms := export_time_usec / 1000 % 1000
-		var sec := export_time_usec / 1000 / 1000 % 1000
-		var mins := export_time_usec / 1000 / 1000 / 60 % 60
-		var hours := export_time_usec / 1000 / 1000 / 60 / 60 % 60
-
-		var time_str := "%02d:%02d:%02d.%03d" % [ hours, mins, sec, ms ]
+		var time_str := "%02d:%02d:%02d.%03d" % [
+					export_time_usec / 1000 / 1000 / 60 / 60 % 60,
+					export_time_usec / 1000 / 1000 / 60 % 60,
+					export_time_usec / 1000 / 1000 % 1000,
+					export_time_usec / 1000 % 1000,
+				]
 
 		progress_text.text = '[%s] ' % [ time_str ] \
 			+ progress_text.text.substr(progress_text.text.find('%') + 1)
-
-
-export (bool) var BUILD_VERBOSE := true
-
-
-func _build_dprint(msg: String) -> void:
-	if not BUILD_VERBOSE: return
-	dprint.write(msg, 'on:BuildButton-pressed')
 
 
 # Outdated now, moved to indicies
@@ -380,10 +363,54 @@ func dump_build_debug_data(export_data_arr, ctx := 'on:BuildButton-pressed') -> 
 					dprint.write('        Offset:    %s' % [ datum ], ctx)
 
 
+func _on_ObjBuilderEntityTree_item_edited() -> void:
+	var edited := item_tree.get_edited()
+	if edited.is_checked(item_tree.COLUMNS.BUILD_BUTTON):
+		build_button.set_disabled(false)
+		update_entity_paths_button.set_disabled(false)
+	elif item_tree.has_checked_item():
+		build_button.set_disabled(false)
+		update_entity_paths_button.set_disabled(false)
+	else:
+		build_button.set_disabled(true)
+		update_entity_paths_button.set_disabled(true)
+
+
+func _on_ObjBuilderEntityTree_button_pressed(item: TreeItem, column: int, id: int) -> void:
+	dprint.write('Pressed: %s{ %s, %s }' % [ item, column, id ], 'on:tree-item-button-pressed')
+
+
+# Some debug signals while I figure out whats not working
+func _on_ObjExporter_export_started(object_name, mesh_count) -> void:
+	pass
+	#  print('Export Started: %s: %d' % [ object_name, mesh_count ])
+
+
+func _on_ObjExporter_export_completed(object_name) -> void:
+	pass
+	#print('Export Completed: %s' % [ object_name ])
+
+
+var test_entity_classnames:= [
+	'E_Killerbot',
+	"E_Grid_Crab",
+	"Player"
+]
+
+func _on_TestTargetButton_pressed() -> void:
+	var entinfos = []
+	for fgd_class in CSquadUtil.fgd.get_fgd_classes():
+		if fgd_class.classname in test_entity_classnames:
+			entinfos.push_back(FGDEntityObjectData.new(fgd_class))
+
+	if entinfos.size() > 0:
+		dprint.write('Building objs for %d entities.' % [ entinfos.size()], 'on:TestTargetButton-pressed')
+		test_button.disabled = true
+		build_objs(entinfos)
+
+
 # Using this kitchen sink class I figure out the best way to pack this
 class EntityExportData:
-	const MESHINFO = MeshInfo.MESHINFO
-
 	var dprint := CSquadUtil.dprint_for('EntityExportData')
 
 	var data: FGDEntityObjectData
@@ -413,9 +440,9 @@ class EntityExportData:
 
 		# Apply transforms/normalization for various mesh forms
 		for info in _mesh_data:
-			info[MESHINFO.MESH] = MeshUtils.ProcessMesh(
-					info[MESHINFO.MESH],
-					info[MESHINFO.OFFSET],
+			info[MeshInfo.MESHINFO.MESH] = MeshUtils.ProcessMesh(
+					info[MeshInfo.MESHINFO.MESH],
+					info[MeshInfo.MESHINFO.OFFSET],
 					CSquadUtil.Settings.scale_factor)
 
 		# Also update vert count for progress
@@ -439,7 +466,11 @@ class EntityExportData:
 					indicies_count += mesh.surface_get_arrays(surf_idx)[ArrayMesh.ARRAY_INDEX].size()
 				else:
 					# Fuck this is why I need to index problem meshes before
-					print('------ No indicies on %s, Mesh %d, Surface %d -------' % [ self.classname, item_idx + 1, surf_idx ])
+					dprint.error('No indicies on %s, Mesh %d, Surface %d' % [
+								self.classname,
+								item_idx + 1,
+								surf_idx,
+							], 'update_indicies_count')
 
 	func _init(ent_info: FGDEntityObjectData, build_mesh_data_immediate := true):
 		self.data = ent_info
@@ -447,49 +478,3 @@ class EntityExportData:
 			dprint.write('Immediate build','on:init')
 			self.build_mesh_data()
 			self.update_indicies_count()
-
-
-func _on_ObjBuilderEntityTree_item_edited() -> void:
-	var edited := item_tree.get_edited()
-	if edited.is_checked(item_tree.COLUMNS.BUILD_BUTTON):
-		build_button.set_disabled(false)
-		update_entity_paths_button.set_disabled(false)
-	elif item_tree.has_checked_item():
-		build_button.set_disabled(false)
-		update_entity_paths_button.set_disabled(false)
-	else:
-		build_button.set_disabled(true)
-		update_entity_paths_button.set_disabled(true)
-
-
-func _on_ObjBuilderEntityTree_button_pressed(item: TreeItem, column: int, id: int) -> void:
-	dprint.write('Pressed: %s{ %s, %s }' % [ item, column, id ], 'on:tree-item-button-pressed')
-
-
-# Some debug signals while I figure out whats not working
-func _on_ObjExporter_export_started(object_name, mesh_count) -> void:
-	pass
-	#  print('Export Started: %s: %d' % [ object_name, mesh_count ])
-
-
-func _on_ObjExporter_export_completed(object_name) -> void:
-	pass
-	#print('Export Completed: %s' % [ object_name ])
-
-var test_entity_classnames:= [
-	'E_Killerbot',
-	"E_Grid_Crab",
-	"Player"
-]
-
-func _on_TestTargetButton_pressed() -> void:
-	var entinfos = []
-	for fgd_class in CSquadUtil.fgd.get_fgd_classes():
-		if fgd_class.classname in test_entity_classnames:
-			entinfos.push_back(FGDEntityObjectData.new(fgd_class))
-
-	if entinfos.size() > 0:
-		dprint.write('Building objs for %d entities.' % [ entinfos.size()], 'on:TestTargetButton-pressed')
-		test_button.disabled = true
-		build_objs(entinfos)
-
