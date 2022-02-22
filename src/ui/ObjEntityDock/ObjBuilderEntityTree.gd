@@ -2,6 +2,10 @@ tool
 class_name ObjBuilderEntityTree # @TODO: Update to ObjBuilderItemTree after getting tree working
 extends Tree
 
+signal update_request()
+
+export (bool) var filter_case_sensitive := true
+
 
 var dprint := CSquadUtil.dprint_for(self)
 
@@ -21,6 +25,7 @@ var buildable_searcher: FGDEntitySceneSearch
 var extractors := CSquadUtil.Extractors
 var ent_infos := [ ]
 var root_item: TreeItem
+var classname_filter := ""
 
 
 func _init() -> void:
@@ -40,9 +45,14 @@ func _init() -> void:
 
 	hide_root = true
 
-func initialize_root():
-	clear()
-	root_item = create_item(null, 0)
+
+func initialize_root(rebuild: bool = true):
+	if rebuild:
+		clear()
+		root_item = create_item(null, 0)
+	elif not is_instance_valid(root_item):
+		root_item = create_item(null, 0)
+
 
 func _ready() -> void:
 	dprint.write('', 'on:ready')
@@ -51,7 +61,7 @@ func _ready() -> void:
 
 	set_hide_root(true)
 
-	pass
+	_queue_update()
 
 
 func _enter_tree() -> void:
@@ -63,6 +73,18 @@ func _exit_tree() -> void:
 	dprint.write('', 'on:exit-tree')
 	clear()
 	pass
+
+
+var _update_queued := false
+func _queue_update():
+	if not is_inside_tree():
+		return
+
+	if _update_queued:
+		return
+
+	_update_queued = true
+	call_deferred("build_items", true)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -146,7 +168,8 @@ func create_base_item(ent_info: FGDEntityObjectData) -> void:
 		#item.set_button_disabled(COLUMNS.BUILD_BUTTON, 0, true)
 
 
-func build_items() -> void:
+func build_items(rebuild := false) -> void:
+	#dprint.write('Building')
 	# Fix for reloads during development
 	if not buildable_searcher:
 		buildable_searcher = FGDEntitySceneSearch.new(CSquadUtil.fgd)
@@ -155,7 +178,7 @@ func build_items() -> void:
 		dprint.error('build_items called before entering tree', 'build_items')
 		return
 
-	initialize_root()
+	initialize_root(rebuild)
 
 	buildable_searcher.collect_entity_scenes()
 	var ent_dict := buildable_searcher.point_ents
@@ -163,10 +186,34 @@ func build_items() -> void:
 
 	ent_infos = ent_dict.values()
 
-	for ent in ents:
-		if ent is FGDEntityObjectData:
-			#var extractor = resolve_packed_scene_extractor(ent.scene)
-			add_ent_item(ent)
+	#var yield_interval := 5
+	#var idx := 0
+
+	if classname_filter.empty():
+		#dprint.write('Empty search filter', 'build_items')
+		for ent in ents:
+			if ent is FGDEntityObjectData:
+				#var extractor = resolve_packed_scene_extractor(ent.scene)
+				add_ent_item(ent)
+				#if idx % yield_interval == 0:
+				#	yield(get_tree().create_timer(0.0), "timeout")
+				#idx += 1
+	else:
+		#dprint.write('Using filter <%s>' % [ classname_filter ], 'build_items')
+		for ent in ents:
+			if ent is FGDEntityObjectData:
+				if (
+					(classname_filter.to_lower() in (ent as FGDEntityObjectData).fgd_class.classname.to_lower())
+						if filter_case_sensitive else
+					(classname_filter in (ent as FGDEntityObjectData).fgd_class.classname)
+				):
+					#var extractor = resolve_packed_scene_extractor(ent.scene)
+					add_ent_item(ent)
+					#if idx % yield_interval == 0:
+					#	yield(get_tree().create_timer(0.0), "timeout")
+					#idx += 1
+
+	_update_queued = false
 
 	return
 
@@ -204,7 +251,7 @@ func has_checked_item() -> bool:
 func _on_ReloadListButton_pressed() -> void:
 	clear()
 	yield(get_tree(), "idle_frame")
-	dprint.write('Rebuilding extractable list', 'on:ReloadListButton-pressed')
+	#dprint.write('Rebuilding extractable list', 'on:ReloadListButton-pressed')
 	build_items()
 
 
@@ -221,3 +268,27 @@ func collect_checked_ent_infos() -> Array:
 		item = item.get_next()
 
 	return collected
+
+
+# Input from search input
+func _on_FilterLineEdit_text_changed(new_text: String) -> void:
+	var new_filter := new_text.strip_edges()
+
+	# Ignore empty/identical inputs iff zero items listed
+	if (get_root().get_next()) and (new_filter.empty() or classname_filter == new_filter):
+		return
+
+	classname_filter = new_filter
+	#dprint.write('Updated filter: <%s>' % [ classname_filter ], 'on:FilterLineEdit-text-changed')
+
+	emit_signal("update_request")
+
+
+func _on_update_request() -> void:
+	#dprint.write('Received', 'on:update_request')
+	_queue_update()
+
+
+# On enter pressed in search input
+func _on_FilterLineEdit_text_entered(new_text: String) -> void:
+	_on_FilterLineEdit_text_changed(new_text)

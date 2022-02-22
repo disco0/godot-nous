@@ -45,7 +45,7 @@ func resolve_meshes(node: Node = target) -> Array:
 
 	# Gonna try it dummy style
 	MeshUtils.CollectChildMeshes(base, meshes, true, node_whitelist)
-	dprint.write('Collected %d child meshes' % [ meshes.size() ])
+	#dprint.write('Collected %d child meshes' % [ meshes.size() ])
 
 
 	if ANIMATION_SEARCH_OVERRIDE_DISABLED == true:

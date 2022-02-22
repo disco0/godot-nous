@@ -24,6 +24,4 @@ func resolve_meshes(node: Node = target) -> Array:
 	if not is_instance_valid(base):
 		return meshes
 
-	AllChildMeshes(base, meshes, true)
-
-	return meshes
+	return MeshUtils.CollectChildMeshes(base, meshes, true)

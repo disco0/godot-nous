@@ -57,7 +57,7 @@ const DATA_FMT := {
 	MAT   = "usemtl %s\n",
 	MTL_LIB = "mtllib %s\n"
 }
-const MESHINFO := ObjBuilder.MESHINFO
+const MESHINFO := MeshInfo.MESHINFO
 
 
 export (bool) var blocking = false
@@ -466,7 +466,7 @@ func cancel_export() -> void:
 
 
 func resolve_spatialmat_albedo(mat: SpatialMaterial) -> Image:
-	dprint.write(' -> SpatialMaterial', 'resolve_spatialmat_albedo')
+	dprint.write(' -> %s' % [ mat ], 'resolve_spatialmat_albedo')
 	# Save albedo tex if found
 	var alb = mat.get_texture(SpatialMaterial.TEXTURE_ALBEDO)
 	if is_instance_valid(alb):
@@ -477,9 +477,9 @@ func resolve_spatialmat_albedo(mat: SpatialMaterial) -> Image:
 		#dprint.write('    SpatialMaterial has no albedo texture', 'resolve_spatialmat_albedo')
 
 	# Check for shader albedo texture
-	var color = mat.albedo_color
-	if is_instance_valid(color):
-		#dprint.write('    -> Found albedo color in base pass', 'resolve_spatialmat_albedo')
+	var color = mat.get('albedo_color')
+	if color is Color:
+		dprint.write('    -> Found albedo color in base pass', 'resolve_spatialmat_albedo')
 		return image_from_color(color)
 	else:
 		#dprint.write('    SpatialMaterial has no albedo color', 'resolve_spatialmat_albedo')
@@ -534,12 +534,17 @@ func resolve_mat_albedo(mat: Material) -> Image:
 		return null
 
 
-func image_from_color(color: Color, width := 128, height := 129) -> Image:
+func image_from_color(color: Color, width := 128, height := 128) -> Image:
+	assert(width > 0)
+	assert(height > 0)
 	var image = Image.new()
-	image.create(128, 128, false, Image.FORMAT_BPTC_RGBA)
-	for y in image.get_height():
-		for x in image.get_width():
-			image.set_pixel(x, y, color)
+	image.create(width, height, false, Image.FORMAT_RGB8)
+
+	image.lock()
+
+	image.fill(color)
+
+	image.unlock()
 	return image
 
 

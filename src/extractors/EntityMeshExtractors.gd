@@ -23,12 +23,10 @@ var instances: Array = [ ]
 # previously registered before adding it.
 func register(extractor):
 	var extractor_instance = extractor.new()
-	#print('[EntityMeshExtractors:register] Instanitated extractor instance for %s' % [ extractor_instance.extractor_name ])
 
 	# Check if already registered (this is overkill but idc lol)
 	for instance in instances:
 		if instance.extractor_name == extractor_instance.extractor_name:
-			#print('[EntityMeshExtractors:register] [WARNING] Already registered extractor with name "%s"' % [ extractor_instance.extractor_name ])
 			return
 
 	instances.push_back(extractor_instance)
@@ -37,19 +35,14 @@ func get_extractor_for_node(node: Node) -> EntityMeshExtractor:
 	var node_name = node.name if node is Node else node
 
 	if typeof(node_name) != TYPE_STRING:
-		#print('[EntityMeshExtractors:get_extractor_for_node] Cannot resolve extract for node without a name. (%s)' % [ node ])
 		return null
 
 	var idx = 0
 	for instance in instances:
-		#print('[EntityMeshExtractors:get_extractor_for_node] Checking extractor #%s' % [ idx ])
 		idx += 1
-
 		if instance.can_target(node):
-			#print('[EntityMeshExtractors:get_extractor_for_node] Resolved extractor: %s' % [ instance.extractor_name ])
 			return instance
 
-	#print('[EntityMeshExtractors:get_extractor_for_node] Failed to resolve extractor for node out of %s defined extractor: %s' % [ instances.size(), node ])
 	return null
 
 func register_extractors() -> void:

@@ -33,7 +33,7 @@ func collect_entity_scenes() -> void:
 	clear_point_ents()
 
 	var ent_defs: Dictionary = fgd.get_entity_definitions()
-	dprint.write('Processing %d entity definitions' % [ ent_defs.size() ], 'collect_entity_scenes')
+	#dprint.write('Processing %d entity definitions' % [ ent_defs.size() ], 'collect_entity_scenes')
 	var keys := ent_defs.keys()
 	var keys_count := keys.size()
 	var last_failed
@@ -50,7 +50,7 @@ func collect_entity_scenes() -> void:
 			dprint.warn('[WARNING] FGD entity has no classname.', 'collect_entity_scenes')
 			continue
 		elif not is_instance_valid(ent_def.scene_file):
-			dprint.warn('Point entity %s has no scene_file' % [ ent_def.classname ], 'collect_entity_scenes')
+			#dprint.warn('Point entity %s has no scene_file' % [ ent_def.classname ], 'collect_entity_scenes')
 			continue
 		elif not ent_def.scene_file.can_instance():
 			dprint.warn('Point entity %s contains non-instanceable scene_file: %s' % [ ent_def.classname, ent_def.scene_file ], 'collect_entity_scenes')

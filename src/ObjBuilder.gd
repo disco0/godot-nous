@@ -61,15 +61,7 @@ func get_node_export_path(root_node: Node, out_dir: String = "") -> String:
 
 	return out_dir.plus_file(root_node.get_tree().edited_scene_root.filename.get_file().get_basename() + '.obj')
 
-
-enum MESHINFO {
-	MESH = 0,
-	OVERRIDE,
-	OFFSET,
-	# Currently unused
-	SCALE_FACTOR
-}
-
+const MESHINFO = MeshInfo.MESHINFO
 
 # Generalized version of initial player test that attempts to match an extractor based on passed
 # scene Node's name.

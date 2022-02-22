@@ -11,12 +11,13 @@ func can_target(node: Node) -> bool:
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():
 		dprint.write('Resolving meshes, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
-	var meshes = [ ]
+	var meshes_info = [ ]
 
 	var base = node.get_node('.')
 	if not is_instance_valid(base):
-		return meshes
+		return meshes_info
 
-	AllChildMeshes(base, meshes, true)
+	#AllChildMeshes(base, meshes, true)
+	MeshUtils.CollectChildMeshes(node, meshes_info, false)
 
-	return meshes
+	return meshes_info

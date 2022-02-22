@@ -2,6 +2,8 @@ tool
 class_name SceneObjBuilderMenuTool
 extends Node
 
+const MESHINFO = MeshInfo.MESHINFO
+
 var dprint := CSquadUtil.dprint_for(self)
 var plugin := CSquadUtil.plugin
 var exporter: ObjExporter
@@ -137,15 +139,15 @@ func export_current_scene_to_obj():
 
 	# Manually duplicate each mesh to avoid scuffing it in the 3D view
 	for info in mesh_infos:
-		var dupe = info[ObjBuilder.MESHINFO.MESH].duplicate()
-		info[ObjBuilder.MESHINFO.MESH] = dupe
+		var dupe = info[MESHINFO.MESH].duplicate()
+		info[MESHINFO.MESH] = dupe
 
 	# Moved here to pass in the total mesh count for now
 	exporter.connect("export_progress", self, "_update_progress", [ mesh_infos.size() ])
 
 	# Scale meshes (moved from ObjExport, still not 100% on where this should be in the process)
 	for info in mesh_infos:
-		MeshUtils.ProcessMesh(info[ObjBuilder.MESHINFO.MESH], info[ObjBuilder.MESHINFO.OFFSET], 1.0)
+		MeshUtils.ProcessMesh(info[MESHINFO.MESH], info[MESHINFO.OFFSET], 1.0)
 
 	dprint.write('Running exporter', 'export_current_scene_to_obj')
 	# Append models subfolder to emulate current game folder structure: <BASE>/models/<EXPORTED>
@@ -306,14 +308,14 @@ func _init_outdir_window():
 #	# Manually duplicate each mesh to avoid scuffing it in the 3D view
 #	for idx in mesh_infos.size():
 #		var info = mesh_infos[idx]
-#		mesh_resource_names.push_back((info[ObjBuilder.MESHINFO.MESH] as Mesh).resource_name)
+#		mesh_resource_names.push_back((info[MESHINFO.MESH] as Mesh).resource_name)
 #		dprint.write('Object #%d: %s' % [ idx, mesh_resource_names[idx] ], 'export_current_scene_to_objs')
-#		var dupe = info[ObjBuilder.MESHINFO.MESH].duplicate()
-#		info[ObjBuilder.MESHINFO.MESH] = dupe
+#		var dupe = info[MESHINFO.MESH].duplicate()
+#		info[MESHINFO.MESH] = dupe
 #
 #	# Scale meshes (moved from ObjExport, still not 100% on where this should be in the process)
 #	for info in mesh_infos:
-#		MeshUtils.ProcessMesh(info[ObjBuilder.MESHINFO.MESH], info[ObjBuilder.MESHINFO.OFFSET], 1.0)
+#		MeshUtils.ProcessMesh(info[MESHINFO.MESH], info[MESHINFO.OFFSET], 1.0)
 #
 #	dprint.write('Running exporter', 'export_current_scene_to_objs')
 #	var scene_basename = root_node.get_tree().edited_scene_root.filename.get_file().get_basename()

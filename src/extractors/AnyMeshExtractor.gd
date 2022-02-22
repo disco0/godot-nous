@@ -16,7 +16,10 @@ func _init() -> void:
 
 func resolve_meshes(node: Node = target) -> Array:
 	var meshes_info := [ ]
-	AllChildMeshes(node, meshes_info, false)
+
+#	AllChildMeshes(node, meshes_info, false)
+	MeshUtils.CollectChildMeshes(node, meshes_info, false)
+
 	return meshes_info
 
 # Just check if there's any meshes

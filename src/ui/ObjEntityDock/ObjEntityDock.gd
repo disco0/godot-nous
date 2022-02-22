@@ -5,11 +5,12 @@ extends Control
 
 var dprint := CSquadUtil.dprint_for(self)
 
-const MESHINFO = ObjBuilder.MESHINFO
+const MESHINFO = MeshInfo.MESHINFO
 
 onready var item_tree: ObjBuilderEntityTree = $VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree
 onready var headers_box: HSplitContainer = $VBoxContainer/Headers
 onready var fgd_button: Button = $VBoxContainer/OpenFGDResButton
+onready var test_button: Button = $VBoxContainer/TestTargetButton
 onready var models_button: Button = $VBoxContainer/OpenFolderButton
 onready var build_button: Button = $VBoxContainer/HBoxContainer/BuildButton
 onready var progress: MarginContainer = $VBoxContainer/Progress
@@ -189,13 +190,16 @@ func stop_profile() -> void:
 # Batch processing starts/is called from here
 #
 func _on_BuildButton_pressed() -> void:
-	_initialize_progress_bar_state()
-
 	# Array of last generated ent_infos should be fine for this
 	var entinfos := item_tree.collect_checked_ent_infos()
 	if entinfos.empty():
 		dprint.error('Gathered zero entities to export.', 'on:BuildButton-pressed')
 		return
+
+	build_objs(entinfos)
+
+func build_objs(entinfos: Array) -> void:
+	_initialize_progress_bar_state()
 
 	indec_total = 0
 	indec_total_digits = 0
@@ -213,7 +217,7 @@ func _on_BuildButton_pressed() -> void:
 	indec_total_digits = str(indec_total).length()
 
 	_build_dprint('Built %d export data instances.' % [ export_data_arr.size() ])
-	dump_build_debug_data(export_data_arr)
+	#dump_build_debug_data(export_data_arr)
 
 	# Show output panel and connect signals
 	progress_text.text = ''
@@ -236,6 +240,7 @@ func _on_BuildButton_pressed() -> void:
 
 		# Await success or failure
 		yield(exporter, "export_completed")
+		test_button.disabled = false
 
 		# Commit to total
 		indec_commit += export_data.indicies_count
@@ -289,12 +294,12 @@ func _update_progress_bar(mesh_idx: int, surface_idx: int, indec_idx: int, curr_
 	var vert_total_digits := indec_total_digits
 
 	progress_bar.set_value((vertex_idx + vertex_commit) / float(vert_total))
-	dprint.write('Position: %8d | Curr Index: %8d | Commit: %8d | Total: %8d' % [
-				vertex_idx + vertex_commit,
-				vertex_idx,
-				vertex_commit,
-				vert_total
-			], '_update_progress_bar')
+	#dprint.write('Position: %8d | Curr Index: %8d | Commit: %8d | Total: %8d' % [
+	#			vertex_idx + vertex_commit,
+	#			vertex_idx,
+	#			vertex_commit,
+	#			vert_total
+	#		], '_update_progress_bar')
 	progress_text.set_text(PROGRESS_TEXT_TEMPLATE % [
 			# %3.2f%%
 			progress_bar.get_value() * 100.0,
@@ -369,13 +374,15 @@ func dump_build_debug_data(export_data_arr, ctx := 'on:BuildButton-pressed') -> 
 				elif datum is Material:
 					if not (datum as Material).get_name().empty():
 						dprint.write('        Override:  %s' % [ (datum as Material).get_name() ], ctx)
-				else:
+				elif datum is Transform:
+					dprint.write('        Transform: %s' % [ datum ], ctx)
+				elif datum is Vector3:
 					dprint.write('        Offset:    %s' % [ datum ], ctx)
 
 
 # Using this kitchen sink class I figure out the best way to pack this
 class EntityExportData:
-	const MESHINFO = ObjBuilder.MESHINFO
+	const MESHINFO = MeshInfo.MESHINFO
 
 	var dprint := CSquadUtil.dprint_for('EntityExportData')
 
@@ -388,12 +395,10 @@ class EntityExportData:
 
 	func get_mesh_data() -> Array:
 		if typeof(_mesh_data) == TYPE_NIL or _mesh_data.empty():
+			dprint.write('Rebuilding _mesh_data','get_mesh_data')
 			build_mesh_data()
 
 		return _mesh_data
-
-	#func get_mesh() -> Mesh:
-	#	return mesh_data[MESHINFO.MESH]
 
 	func get_extractor() -> EntityMeshExtractor:
 		return data.extractor
@@ -403,7 +408,8 @@ class EntityExportData:
 
 	func build_mesh_data() -> void:
 		_mesh_data.clear()
-		_mesh_data = get_extractor().resolve_meshes(data.scene.instance())
+		var extractor := get_extractor()
+		_mesh_data = extractor.resolve_meshes(data.scene.instance())
 
 		# Apply transforms/normalization for various mesh forms
 		for info in _mesh_data:
@@ -438,6 +444,7 @@ class EntityExportData:
 	func _init(ent_info: FGDEntityObjectData, build_mesh_data_immediate := true):
 		self.data = ent_info
 		if build_mesh_data_immediate:
+			dprint.write('Immediate build','on:init')
 			self.build_mesh_data()
 			self.update_indicies_count()
 
@@ -468,3 +475,21 @@ func _on_ObjExporter_export_started(object_name, mesh_count) -> void:
 func _on_ObjExporter_export_completed(object_name) -> void:
 	pass
 	#print('Export Completed: %s' % [ object_name ])
+
+var test_entity_classnames:= [
+	'E_Killerbot',
+	"E_Grid_Crab",
+	"Player"
+]
+
+func _on_TestTargetButton_pressed() -> void:
+	var entinfos = []
+	for fgd_class in CSquadUtil.fgd.get_fgd_classes():
+		if fgd_class.classname in test_entity_classnames:
+			entinfos.push_back(FGDEntityObjectData.new(fgd_class))
+
+	if entinfos.size() > 0:
+		dprint.write('Building objs for %d entities.' % [ entinfos.size()], 'on:TestTargetButton-pressed')
+		test_button.disabled = true
+		build_objs(entinfos)
+

@@ -18,13 +18,13 @@ var animation: String = 'Run'
 
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():
-		dprint.write('Resolving meshes, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
-	var meshes = [ ]
+		dprint.write('Resolving meshes_info, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
+	var meshes_info = [ ]
 
 	var base = node.get_node(SkeletonNodeLeafPath)
 	if not is_instance_valid(base):
 		dprint.write('[WARNING] Failed to get skeleton child node with leaf path: %s' % [ SkeletonNodeLeafPath ], 'resolve_meshes')
-		return meshes
+		return meshes_info
 
 	var animation_player: AnimationPlayer
 	if ANIMATION_SEARCH_OVERRIDE_DISABLED == true:
@@ -42,7 +42,8 @@ func resolve_meshes(node: Node = target) -> Array:
 				animation_player.seek(0.1, true)
 
 	# Gonna try it dummy style
-	AllChildMeshes(base, meshes, true)
+	AllChildMeshes(base, meshes_info, true)
+	MeshUtils.CollectChildMeshes(node, meshes_info, false)
 
 	if ANIMATION_SEARCH_OVERRIDE_DISABLED == true:
 		pass
@@ -50,4 +51,4 @@ func resolve_meshes(node: Node = target) -> Array:
 		if animation and is_instance_valid(animation_player):
 			animation_player.stop()
 
-	return meshes
+	return meshes_info
