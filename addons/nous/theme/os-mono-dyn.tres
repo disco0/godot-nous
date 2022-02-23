@@ -1,0 +1,10 @@
+[gd_resource type="DynamicFont" load_steps=3 format=2]
+
+[ext_resource path="res://addons/nous/theme/os-mono-dyn.gd" type="Script" id=1]
+
+[sub_resource type="DynamicFontData" id=1]
+
+[resource]
+size = 14
+font_data = SubResource( 1 )
+script = ExtResource( 1 )

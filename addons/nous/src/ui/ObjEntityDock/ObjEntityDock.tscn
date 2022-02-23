@@ -1,0 +1,209 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/nous/src/ui/ObjEntityDock/ObjEntityDock.gd" type="Script" id=1]
+[ext_resource path="res://addons/nous/src/ui/ObjEntityDock/ObjBuilderEntityTree.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/nous/theme/theme.tres" type="Theme" id=3]
+[ext_resource path="res://addons/nous/src/ObjExporter.gd" type="Script" id=4]
+[ext_resource path="res://addons/nous/src/lib/dispatch_queue/dispatch_queue_node.gd" type="Script" id=5]
+
+[node name="Entity Obj Info" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -789.0
+theme = ExtResource( 3 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = 3.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TestTargetButton" type="Button" parent="VBoxContainer"]
+visible = false
+margin_right = 488.0
+margin_bottom = 20.0
+text = "Run Test Target"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemButtonToggles" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 488.0
+margin_bottom = 20.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Select All" type="Button" parent="VBoxContainer/ItemButtonToggles"]
+margin_right = 242.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Select All"
+
+[node name="DeselectAll" type="Button" parent="VBoxContainer/ItemButtonToggles"]
+margin_left = 246.0
+margin_right = 488.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Deselect All"
+
+[node name="FilterLineEdit" type="LineEdit" parent="VBoxContainer"]
+margin_top = 24.0
+margin_right = 488.0
+margin_bottom = 48.0
+clear_button_enabled = true
+placeholder_text = "Filter"
+placeholder_alpha = 0.3
+caret_blink = true
+
+[node name="Headers" type="HSplitContainer" parent="VBoxContainer"]
+visible = false
+margin_top = 24.0
+margin_right = 488.0
+margin_bottom = 38.0
+custom_constants/separation = 0
+dragger_visibility = 2
+
+[node name="Entity" type="Label" parent="VBoxContainer/Headers"]
+margin_right = 150.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 150, 0 )
+text = "Entity"
+
+[node name="Extractor" type="Label" parent="VBoxContainer/Headers"]
+margin_left = 150.0
+margin_right = 488.0
+margin_bottom = 14.0
+text = "Extractor"
+
+[node name="HSep1" type="HSeparator" parent="VBoxContainer"]
+visible = false
+margin_right = 1277.0
+margin_bottom = 4.0
+
+[node name="EntityTreeScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+margin_top = 52.0
+margin_right = 488.0
+margin_bottom = 621.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ObjBuilderEntityTree" parent="VBoxContainer/EntityTreeScrollContainer" instance=ExtResource( 2 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 488.0
+margin_bottom = 569.0
+
+[node name="ReloadListButton" type="Button" parent="VBoxContainer"]
+margin_top = 625.0
+margin_right = 488.0
+margin_bottom = 645.0
+size_flags_horizontal = 3
+text = "Refresh List"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 649.0
+margin_right = 488.0
+margin_bottom = 669.0
+
+[node name="BuildButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+margin_right = 242.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+disabled = true
+text = "Build Selected"
+
+[node name="UpdateFGDModelPaths" type="Button" parent="VBoxContainer/HBoxContainer"]
+margin_left = 246.0
+margin_right = 488.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+disabled = true
+text = "Update Model Paths"
+
+[node name="Progress" type="MarginContainer" parent="VBoxContainer"]
+visible = false
+margin_top = 655.0
+margin_right = 488.0
+margin_bottom = 669.0
+size_flags_horizontal = 3
+
+[node name="Bar" type="ProgressBar" parent="VBoxContainer/Progress"]
+self_modulate = Color( 1, 1, 1, 0.396078 )
+margin_right = 488.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/font_color = Color( 0, 0, 0, 0 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0 )
+max_value = 1.0
+value = 0.45
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text" type="Label" parent="VBoxContainer/Progress"]
+margin_right = 488.0
+margin_bottom = 14.0
+text = "<Progress>"
+align = 1
+valign = 1
+
+[node name="OpenFolderButton" type="Button" parent="VBoxContainer"]
+margin_top = 673.0
+margin_right = 488.0
+margin_bottom = 693.0
+hint_tooltip = "Open C:/csquad/project/Maps/models in OS file manager"
+size_flags_horizontal = 3
+text = "Open Models Folder"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OpenFGDResButton" type="Button" parent="VBoxContainer"]
+margin_top = 697.0
+margin_right = 488.0
+margin_bottom = 717.0
+hint_tooltip = "Open res://addons/qodot/game-definitions/fgd/qodot_fgd.tres in inspector panel"
+text = "Inspect FGD"
+expand_icon = true
+
+[node name="Proc" type="Node" parent="."]
+pause_mode = 2
+
+[node name="ObjExporter" type="Node" parent="Proc"]
+process_priority = 3
+script = ExtResource( 4 )
+
+[node name="DispatchQueue" type="Node" parent="Proc"]
+script = ExtResource( 5 )
+thread_count = 0
+
+[node name="Instancer" type="Node" parent="Proc"]
+
+[connection signal="pressed" from="VBoxContainer/TestTargetButton" to="." method="_on_TestTargetButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/ItemButtonToggles/Select All" to="." method="_on_Select_All_pressed"]
+[connection signal="pressed" from="VBoxContainer/ItemButtonToggles/DeselectAll" to="." method="_on_DeselectAll_pressed"]
+[connection signal="text_changed" from="VBoxContainer/FilterLineEdit" to="VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree" method="_on_FilterLineEdit_text_changed"]
+[connection signal="text_entered" from="VBoxContainer/FilterLineEdit" to="VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree" method="_on_FilterLineEdit_text_entered"]
+[connection signal="item_activated" from="VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree" to="." method="_on_ObjBuilderEntityTree_item_activated"]
+[connection signal="item_edited" from="VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree" to="." method="_on_ObjBuilderEntityTree_item_edited"]
+[connection signal="pressed" from="VBoxContainer/ReloadListButton" to="VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree" method="_on_ReloadListButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/BuildButton" to="." method="_on_BuildButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/UpdateFGDModelPaths" to="." method="_on_UpdateFGDModelPaths_pressed"]
+[connection signal="pressed" from="VBoxContainer/OpenFolderButton" to="." method="_on_OpenFolderButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/OpenFGDResButton" to="." method="_on_OpenFGDResButton_pressed"]
+[connection signal="export_completed" from="Proc/ObjExporter" to="." method="_on_ObjExporter_export_completed"]
+[connection signal="export_started" from="Proc/ObjExporter" to="." method="_on_ObjExporter_export_started"]

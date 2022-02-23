@@ -1,0 +1,73 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/nous/src/ui/main-panels/NousSettingsPanelItem.gd" type="Script" id=1]
+
+[node name="NousSettingsPanelItem" type="HBoxContainer"]
+margin_right = 507.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 0, 26 )
+size_flags_horizontal = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_right = 160.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 160, 24 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+valign = 1
+
+[node name="Value" type="Container" parent="."]
+margin_left = 164.0
+margin_right = 664.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 500, 24 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LineEdit" type="LineEdit" parent="Value"]
+margin_right = 500.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="Button" type="Button" parent="Value/LineEdit"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -25.696
+margin_top = -10.3454
+margin_right = -1.69604
+margin_bottom = 9.65464
+rect_clip_content = true
+text = "..."
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckBox" type="CheckBox" parent="Value"]
+visible = false
+margin_right = 24.0
+margin_bottom = 24.0
+
+[node name="SpinBox" type="SpinBox" parent="Value"]
+visible = false
+margin_right = 74.0
+margin_bottom = 24.0
+min_value = 0.025
+max_value = 20.0
+step = 0.125
+value = 4.5
+allow_greater = true
+
+[connection signal="renamed" from="Label" to="." method="_on_Label_renamed"]
+[connection signal="text_entered" from="Value/LineEdit" to="." method="_on_LineEdit_text_entered"]
+[connection signal="pressed" from="Value/LineEdit/Button" to="." method="_on_PathButton_button_pressed"]
+[connection signal="toggled" from="Value/CheckBox" to="." method="_on_CheckBox_toggled"]
+[connection signal="value_changed" from="Value/SpinBox" to="." method="_on_SpinBox_value_changed"]

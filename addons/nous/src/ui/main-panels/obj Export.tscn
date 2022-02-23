@@ -1,0 +1,63 @@
+[gd_scene format=2]
+
+[node name="obj Export" type="MarginContainer"]
+visible = false
+margin_left = 628.0
+margin_top = 341.0
+margin_right = 652.0
+margin_bottom = 378.0
+
+[node name="HorizPadContainer" type="HBoxContainer" parent="."]
+margin_right = 92.0
+margin_bottom = 45.0
+
+[node name="HPad" type="Label" parent="HorizPadContainer"]
+margin_right = 8.0
+margin_bottom = 45.0
+size_flags_horizontal = 0
+size_flags_vertical = 3
+text = "  "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ObjEntitiesContainer" type="VBoxContainer" parent="HorizPadContainer"]
+margin_left = 12.0
+margin_right = 80.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VPad" type="Label" parent="HorizPadContainer/ObjEntitiesContainer"]
+margin_right = 68.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="HorizPadContainer/ObjEntitiesContainer"]
+margin_top = 18.0
+margin_right = 68.0
+margin_bottom = 32.0
+text = ".obj Export"
+
+[node name="EntityList" type="ItemList" parent="HorizPadContainer/ObjEntitiesContainer"]
+margin_top = 36.0
+margin_right = 68.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 16.89
+auto_height = true
+same_column_width = true
+
+[node name="VPad2" type="Label" parent="HorizPadContainer"]
+margin_left = 84.0
+margin_right = 92.0
+margin_bottom = 45.0
+size_flags_horizontal = 0
+size_flags_vertical = 3
+text = "  "
+__meta__ = {
+"_edit_use_anchors_": false
+}
