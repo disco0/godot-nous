@@ -230,9 +230,15 @@ class EditedScene:
 # └─ QodotMap
 #```
 static func handles(node) -> bool:
-	return node is Spatial and (
-		(not (node as Node).get_owner() is Node) or node.owner.name != "Level"
-	) and EditedScene.TryResolveLevelNode(node) is Spatial
+	if not (node as Node):
+		print('[NavMeshBuilder#Handles] node is not Node.' % [ node ])
+		return false
+
+	var scene_root := (node as Node).get_tree().get_edited_scene_root()
+	print('[NavMeshBuilder#Handles] Scene root: %s' % [ scene_root ])
+	return scene_root.name == "Level"
+#		(not (node as Node).get_owner() is Node) or node.owner.name != "Level"
+#	) and EditedScene.TryResolveLevelNode(node) is Spatial
 
 #region Filename Patterns
 

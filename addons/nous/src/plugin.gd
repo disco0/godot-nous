@@ -20,9 +20,9 @@ const HANDLES_MAIN_SCREEN_WHITELIST := [ '3D' ]
 
 var main_panel_instance:     Control
 var last_scratch_instance:   EditorScript
-var objbuild:                ObjBuilderManager
-var nav:                     NavManager
-var export_obj_tool:         SceneObjBuilderMenuTool
+var objbuild: ObjBuilderManager
+var nav: NavManager
+var export_obj_tool
 
 var handled            := weakref(null)
 var active_main_screen := ""
@@ -30,13 +30,13 @@ var active_main_screen := ""
 
 func _init() -> void:
 	dprint.write('', 'on:init')
+	# Load singleton
+	add_autoload_singleton('Nous', 'res://addons/nous/src/NousGlobal.gd')
 
 
 func _enter_tree() -> void:
 	dprint.write('', 'on:enter-tree')
 
-	# Load singleton
-	add_autoload_singleton('Nous', 'res://addons/nous/src/NousGlobal.gd')
 	if not Nous._loaded:
 		yield(Nous, "loaded")
 
@@ -127,13 +127,16 @@ func handles(object: Object) -> bool:
 	elif not is_instance_valid(nav.builder):
 		dprint.error('nav.builder is not a valid instance', 'handles')
 		nav.set_visible(false)
-	elif nav.builder.handles(object):
-		handled = weakref(object)
-		nav.builder.edited.update(object)
-		nav.set_visible(true)
 	else:
-		nav.builder.edited.update(null)
-		nav.set_visible(false)
+		if nav.builder.handles(object):
+			dprint.write('nav.builder handles %s' % [ object ], 'handles')
+			handled = weakref(object)
+			nav.builder.edited.update(object)
+			nav.set_visible(true)
+		else:
+			dprint.write('nav.builder does not handle %s' % [ object ], 'handles')
+			nav.builder.edited.update(null)
+			nav.set_visible(false)
 
 	# For obj export (TODO: collect all this shit into UI script)
 	if not is_instance_valid(objbuild):
@@ -145,7 +148,7 @@ func handles(object: Object) -> bool:
 	else:
 		objbuild.ui_3d.clear_edited()
 		objbuild.set_visible(false)
-		return true
+		return false
 
 	return false
 
@@ -155,6 +158,7 @@ func edit(object: Object) -> void:
 		dprint.warn('<out of tree>', 'edit')
 
 	if nav.builder.handles(object):
+		dprint.write('NavBuilder handles %s' % [ object ], 'edit')
 		nav.builder.edited.update(object)
 
 	objbuild.edit(object)
@@ -171,7 +175,7 @@ func _on_main_screen_changed(screen_name) -> void:
 	if MAIN_PANEL_ENABLED:
 		main_panel_instance.visible = active_main_screen == plugin_ui_name
 
-	# dprint.write('Updated main screen: %s' % [ active_main_screen ], 'on:main-screen-changed')
+	dprint.write('Updated main screen: %s' % [ active_main_screen ], 'on:main-screen-changed')
 
 
 func _on_editor_base_ready() -> void:

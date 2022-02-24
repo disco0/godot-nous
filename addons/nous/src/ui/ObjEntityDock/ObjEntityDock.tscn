@@ -6,7 +6,7 @@
 [ext_resource path="res://addons/nous/src/ObjExporter.gd" type="Script" id=4]
 [ext_resource path="res://addons/nous/src/lib/dispatch_queue/dispatch_queue_node.gd" type="Script" id=5]
 
-[node name="Entity Obj Info" type="Control"]
+[node name="Obj Export" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -789.0

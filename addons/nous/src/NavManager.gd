@@ -37,4 +37,8 @@ func unload():
 
 
 func set_visible(value: bool) -> void:
+	if value:
+		dprint.write('Setting ui visible', 'set_visible')
+	else:
+		dprint.write('Hiding ui', 'set_visible')
 	ui.set_visible(value)
