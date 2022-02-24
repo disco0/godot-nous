@@ -1,6 +1,6 @@
 # Nous
 
-Utility for TrenchBroom/Qodot based development in Godot—both plugin and target features in TrenchBroom and plugin very much WIP.
+Utility for TrenchBroom/Qodot based development in Godot—both plugin and target features in TrenchBroom and plugin very much WIP. 
 
 
 ## Install
@@ -10,6 +10,8 @@ Place `addons/nous` in your project's `addons` folder.
 ## Usage
 
 ### TrenchBroom Entity Model Export
+
+Builds `.obj` files, and their textures, into a configured TrenchBroom game directory. `.obj` files load textures TrenchBroom-compatible method (`usemtl <game-dir-relative-texture-path>`). Original use case is working on modding support in Cruelty Squad with only a decompiled project folder with no original models.
 
 #### Qodot / TrenchBroom
 
@@ -50,9 +52,9 @@ Entity scenes are matched with and passed to implementations of the base `Entity
 
 See `src/extractors` folder for various implementations created for and used in Cruelty Squad mod development. A more streamlined interface for adding extractors is very much on the TODO list.
 
-### Navigation Mesh Management
+### Navigation Meshes
 
-Feature from an older version of Nous (née `csquad-util`) for programatically building navigation meshes via entity filtering and group tagging, as well as saving/loading from cached mesh resources on disk— very much a game specific workaround, but possibly useful.
+Feature from an older version of Nous (née `csquad-util`) for programatically building navigation meshes via entity filtering and group tagging, as well as saving/loading from saved mesh resource files on disk—very much a game specific workaround, but possibly useful.
 
 <img src="media/navbuilder-menu-01.png" alt="NavBuilder Menu"/>
 
