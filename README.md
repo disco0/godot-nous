@@ -11,11 +11,11 @@ Place `addons/nous` in your project's `addons` folder.
 
 ### TrenchBroom Entity Model Export
 
-Builds `.obj` files, and their textures, into a configured TrenchBroom game directory. `.obj` files load textures TrenchBroom-compatible method (`usemtl <game-dir-relative-texture-path>`). Original use case is working on modding support in Cruelty Squad with only a decompiled project folder with no original models.
+Export an `.obj` file, and its used textures, into a configured TrenchBroom game directory for a given scene file. `.obj` files load textures in a TrenchBroom-friendly manner (`usemtl <game-dir-relative-texture-path>`). (Original use case is working on modding support in Cruelty Squad with only a decompiled project folder with no original models.)
 
 #### Qodot / TrenchBroom
 
-At the time of writing, the [pull request adding `.obj` model support](https://github.com/TrenchBroom/TrenchBroom/pull/3910) has still not been merged, but hopefully will soon—until its merged (or `.mdl` is implemented in this plugin), a build of that fork is required.
+At the time of writing, the [pull request adding `.obj` model support](https://github.com/TrenchBroom/TrenchBroom/pull/3910) has still not been merged, but hopefully will soon—until its merged (or export to `.mdl` is implemented in this plugin), a build of that fork is required.
 
 As for Qodot:
   - `obj` format must be added to the list of model formats in [trenchbroom_game_config_file.gd](https://github.com/QodotPlugin/qodot-plugin/blob/6f98fdb739abc5b25031a01582749be98d194bfe/addons/qodot/src/resources/game-definitions/trenchbroom/trenchbroom_game_config_file.gd#L43)
