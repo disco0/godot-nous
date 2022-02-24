@@ -160,8 +160,8 @@ func export_current_scene_to_obj():
 
 func _on_export_complete():
 	dprint.write('Export complete.', 'on:export-complete')
-	SignalUtil.DisconnectIfConnected(exporter, "export_completed", self, "_on_export_complete")
-	SignalUtil.DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
+	SignalUtils.DisconnectIfConnected(exporter, "export_completed", self, "_on_export_complete")
+	SignalUtils.DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
 	disconnect_prompt()
 	disconnect_exporter_progress()
 
@@ -198,16 +198,16 @@ func _on_prompt_visiblity_change() -> void:
 
 func disconnect_exporter_progress() -> void:
 	dprint.write('', 'disconnect_exporter_progress')
-	SignalUtil.DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
-	SignalUtil.DisconnectIfConnected(exporter, "export_progress", progress, "_update_progress")
+	SignalUtils.DisconnectIfConnected(exporter, "export_progress", self, "_update_progress")
+	SignalUtils.DisconnectIfConnected(exporter, "export_progress", progress, "_update_progress")
 
 
 func disconnect_prompt() -> void:
 	dprint.write('', 'disconnect_prompt')
-	SignalUtil.DisconnectIfConnected(prompt, 'confirmed', self, "_on_prompt_confirmed")
-	SignalUtil.DisconnectIfConnected(prompt, 'dir_selected', self, "_on_dir_selected")
-	SignalUtil.DisconnectIfConnected(prompt, "popup_hide", self, "_on_prompt_confirmed")
-	SignalUtil.DisconnectIfConnected(prompt, 'visibility_changed', self, "_on_prompt_visiblity_change")
+	SignalUtils.DisconnectIfConnected(prompt, 'confirmed', self, "_on_prompt_confirmed")
+	SignalUtils.DisconnectIfConnected(prompt, 'dir_selected', self, "_on_dir_selected")
+	SignalUtils.DisconnectIfConnected(prompt, "popup_hide", self, "_on_prompt_confirmed")
+	SignalUtils.DisconnectIfConnected(prompt, 'visibility_changed', self, "_on_prompt_visiblity_change")
 
 
 func _on_prompt_confirmed():

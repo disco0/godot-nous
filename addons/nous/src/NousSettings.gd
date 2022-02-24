@@ -1,5 +1,5 @@
 tool
-class_name NousSettings
+class_name CruSUtilSettings
 extends Node
 
 signal loaded()
@@ -11,24 +11,12 @@ const DEFAULT_FGD_PATH := "res://addons/qodot/game-definitions/fgd/qodot_fgd.tre
 const setting_file: = "settings.cfg"
 
 enum SETTING {
-	GAME_DIR      = 0,
-	FGD_FILE_PATH = 1,
-	SCALE_FACTOR  = 2,
 }
 const SETTING_DEFAULTS := {
-	SETTING.GAME_DIR:      'res://Maps',
-	SETTING.FGD_FILE_PATH: DEFAULT_FGD_PATH,
-	SETTING.SCALE_FACTOR:  4.5,
 }
 const SETTING_MEMBER := {
-	SETTING.GAME_DIR:      "game_dir",
-	SETTING.FGD_FILE_PATH: "fgd_file_path",
-	SETTING.SCALE_FACTOR:  "scale_factor",
 }
 const SETTING_UI := {
-	SETTING.GAME_DIR:      "TrenchBroom Game Directory",
-	SETTING.FGD_FILE_PATH: "FGD Definiton Resource Path",
-	SETTING.SCALE_FACTOR:  "Default Inverse Scale Factor",
 }
 enum SETTING_UI_MODES {
 	PATH     = 0,
@@ -36,9 +24,6 @@ enum SETTING_UI_MODES {
 	SPINBOX  = 2,
 }
 const SETTING_UI_MODE := {
-	SETTING.GAME_DIR:      SETTING_UI_MODES.PATH,
-	SETTING.FGD_FILE_PATH: SETTING_UI_MODES.PATH,
-	SETTING.SCALE_FACTOR:  SETTING_UI_MODES.SPINBOX,
 }
 
 
@@ -139,7 +124,7 @@ func set_game_dir(value: String) -> void:
 func _update_fgd():
 	var inst = load(fgd_file_path)
 	if is_instance_valid(inst):
-		Nous.fgd = inst
+		CruSUtil.fgd = inst
 	else:
 		dprint.error('Failed to load from configured path <%s>' % [ fgd_file_path ], '_update_fgd')
 

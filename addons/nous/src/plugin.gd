@@ -1,36 +1,29 @@
 tool
 extends EditorPlugin
 
-
-const MAIN_PANEL_ENABLED         := true
-const HANDLES_DUMP_OBJ_PREVIEW   := true
-
-
 var plugin := self
-const plugin_name    := 'nous'
-const plugin_ui_name := 'Nous'
-const plugin_path    := "res://addons/" + plugin_name
-
 var dprint := preload("./util/logger.gd").Builder.get_for('NousPlugin')
 
-const MainPanelRes               := preload("./ui/main-panels/MainPanel.tscn")
-#const NavMeshBuilderContainerPath := plugin_path + '/src/ui/NavMeshBuilderContainer.tscn'
-const NavMeshBuilderContainerRes := preload('./ui/NavMeshBuilderContainer.tscn')
+const MAIN_PANEL_ENABLED := true
+const HANDLES_DUMP_OBJ_PREVIEW := true
 const HANDLES_MAIN_SCREEN_WHITELIST := [ '3D' ]
+
+const plugin_name    := 'nous'
+const plugin_path    := "res://addons/" + plugin_name
+const plugin_ui_name := 'Nous'
+
+const MainPanelRes := preload("./ui/main-panels/MainPanel.tscn")
 
 var main_panel_instance:     Control
 var last_scratch_instance:   EditorScript
-var objbuild: ObjBuilderManager
-var nav: NavManager
-var export_obj_tool
-
-var handled            := weakref(null)
-var active_main_screen := ""
+var objbuild:                ObjBuilderManager
+var export_obj_tool:         SceneObjBuilderMenuTool
+var handled                  := weakref(null)
+var active_main_screen       := ""
 
 
 func _init() -> void:
 	dprint.write('', 'on:init')
-	# Load singleton
 	add_autoload_singleton('Nous', 'res://addons/nous/src/NousGlobal.gd')
 
 
@@ -40,10 +33,8 @@ func _enter_tree() -> void:
 	if not Nous._loaded:
 		yield(Nous, "loaded")
 
-	dprint.write('Passing plugin to singleton', 'on:enter-tree')
 	Nous.register_plugin_instance(self)
 
-	nav = NavManager.new(NavMeshBuilder.new(self), NavMeshBuilderContainerRes.instance())
 	objbuild = ObjBuilderManager.new(self)
 	Nous.add_child(objbuild)
 
@@ -68,21 +59,21 @@ func _ready() -> void:
 
 func _destroy_interface() -> void:
 
+	#remove_tool_menu_item('Run Nous Scratch Script')
+
 	if MAIN_PANEL_ENABLED:
 		if is_instance_valid(main_panel_instance):
 			main_panel_instance.get_parent().remove_child(main_panel_instance)
 			main_panel_instance.queue_free()
 
-	if export_obj_tool:
+	if is_instance_valid(export_obj_tool):
 		export_obj_tool.queue_free()
-
-	remove_tool_menu_item('Run Nous Scratch Script')
 
 
 func _exit_tree() -> void:
 	dprint.write('', 'on:exit-tree')
 	_destroy_interface()
-	self.queue_free()
+	if is_instance_valid(self): self.queue_free()
 
 
 func enable_plugin() -> void:
@@ -92,51 +83,28 @@ func enable_plugin() -> void:
 func disable_plugin() -> void:
 	dprint.write('', 'on:plugin-disabled')
 	_destroy_interface()
-	self.queue_free()
+	if is_instance_valid(self): self.queue_free()
 
 
-func has_main_screen() -> bool:
-	return MAIN_PANEL_ENABLED
+func has_main_screen() -> bool: return MAIN_PANEL_ENABLED
 
 
 func handles(object: Object) -> bool:
 	# At the time of writing, this plugin works with map and entity scenes. Until that changes,
-	# (or I notice its a problem dogfooding,) don't handle anything when not in the 3D panel.
+	# don't handle anything when not in the 3D panel.
 	if not HANDLES_MAIN_SCREEN_WHITELIST.has(active_main_screen):
 		return false
 
 	# @NOTE: Doing this to avoid slowdowns when opening FGD file, this shouldn't effect anything
 	#        but if something breaks this is the problem.
-	# @NOTE: Main screen whitelist may make this unnecessary
 	if not (object is Node):
-		if HANDLES_DUMP_OBJ_PREVIEW:
-			dprint.write('Skipped: %s' % [ object ], 'handles')
 		return false
-	elif HANDLES_DUMP_OBJ_PREVIEW:
-		dprint.write('Checking: %s' % [ object ], 'handles')
 
 	if not is_inside_tree():
-		dprint.write('[Out of tree]', 'handles')
-		push_error('%s >> handles called outside of tree. Passed object: %s' % [ plugin_name, object ])
+		dprint.error('handles called outside of tree. Passed object: %s' % [ object ], 'handles')
 		return false
 
 	# handles_debug(object)
-
-	if not is_instance_valid(nav):
-		dprint.error('nav is not a valid instance', 'handles')
-	elif not is_instance_valid(nav.builder):
-		dprint.error('nav.builder is not a valid instance', 'handles')
-		nav.set_visible(false)
-	else:
-		if nav.builder.handles(object):
-			dprint.write('nav.builder handles %s' % [ object ], 'handles')
-			handled = weakref(object)
-			nav.builder.edited.update(object)
-			nav.set_visible(true)
-		else:
-			dprint.write('nav.builder does not handle %s' % [ object ], 'handles')
-			nav.builder.edited.update(null)
-			nav.set_visible(false)
 
 	# For obj export (TODO: collect all this shit into UI script)
 	if not is_instance_valid(objbuild):
@@ -151,17 +119,6 @@ func handles(object: Object) -> bool:
 		return false
 
 	return false
-
-
-func edit(object: Object) -> void:
-	if not is_inside_tree():
-		dprint.warn('<out of tree>', 'edit')
-
-	if nav.builder.handles(object):
-		dprint.write('NavBuilder handles %s' % [ object ], 'edit')
-		nav.builder.edited.update(object)
-
-	objbuild.edit(object)
 
 
 func run_scratch_script(_arg):

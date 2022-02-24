@@ -13,6 +13,8 @@ Place `addons/nous` in your project's `addons` folder.
 
 Export an `.obj` file, and its used textures, into a configured TrenchBroom game directory for a given scene file. `.obj` files load textures in a TrenchBroom-friendly manner (`usemtl <game-dir-relative-texture-path>`). (Original use case is working on modding support in Cruelty Squad with only a decompiled project folder with no original models.)
 
+`.obj` file generation based on [fractilegame's godot-obj-export script](https://github.com/fractilegames/godot-obj-export), with additional input mesh compatibility, texture linking, and significant performance improvement from reducing string conversions and replacing string concatenation with a single `PoolStringArray`.
+
 #### Qodot / TrenchBroom
 
 At the time of writing, the [pull request adding `.obj` model support](https://github.com/TrenchBroom/TrenchBroom/pull/3910) has still not been merged, but hopefully will soon—until its merged (or export to `.mdl` is implemented in this plugin), a build of that fork is required.
