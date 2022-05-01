@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/eyes.mdl-6042579710dbe217a3a49b13f669f5dd.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/eyes.mdl"
+dest_files=[ "res://.import/eyes.mdl-6042579710dbe217a3a49b13f669f5dd.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

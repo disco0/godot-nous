@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/zombie.mdl-0f8c13edb367e0549928608cf6bf560d.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/zombie.mdl"
+dest_files=[ "res://.import/zombie.mdl-0f8c13edb367e0549928608cf6bf560d.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

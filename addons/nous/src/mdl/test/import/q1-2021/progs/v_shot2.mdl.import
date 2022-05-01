@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/v_shot2.mdl-35e32d1d574e2eb5ffe5c5f8057a12e5.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/v_shot2.mdl"
+dest_files=[ "res://.import/v_shot2.mdl-35e32d1d574e2eb5ffe5c5f8057a12e5.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

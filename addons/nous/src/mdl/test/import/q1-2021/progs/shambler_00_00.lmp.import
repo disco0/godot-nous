@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/shambler_00_00.lmp-7b998a390e57b794a08f1cd58fcb71ed.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/shambler_00_00.lmp"
+dest_files=[ "res://.import/shambler_00_00.lmp-7b998a390e57b794a08f1cd58fcb71ed.tres" ]
+
+[params]
+

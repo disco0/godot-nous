@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/knight.mdl-206bacbe2b6301e09b78aeec4bedb8c4.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/knight.mdl"
+dest_files=[ "res://.import/knight.mdl-206bacbe2b6301e09b78aeec4bedb8c4.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

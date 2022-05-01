@@ -5,16 +5,16 @@ extends Node
 signal loaded()
 signal settings_change(value, setting_idx)
 
-var dprint := preload('./util/logger.gd').Builder.get_for(self, null, Colorful.PURPLE_BRIGHT)
-
-const DEFAULT_FGD_PATH := "res://addons/qodot/game-definitions/fgd/qodot_fgd.tres"
-const setting_file: = "settings.cfg"
+var dprint := preload('./util/logger.gd').Builder.get_for(self)
 
 enum SETTING {
 	GAME_DIR      = 0,
 	FGD_FILE_PATH = 1,
 	SCALE_FACTOR  = 2,
 }
+
+const DEFAULT_FGD_PATH := "res://addons/qodot/game-definitions/fgd/qodot_fgd.tres"
+const setting_file: = "settings.cfg"
 const SETTING_DEFAULTS := {
 	SETTING.GAME_DIR:      'res://Maps',
 	SETTING.FGD_FILE_PATH: DEFAULT_FGD_PATH,
@@ -41,6 +41,15 @@ const SETTING_UI_MODE := {
 	SETTING.SCALE_FACTOR:  SETTING_UI_MODES.SPINBOX,
 }
 
+# Used for reverse lookup of setting name from SETTING enum
+var _SETTING_KEYS := PoolStringArray(SETTING.keys())
+var scale_factor: float = SETTING_DEFAULTS[SETTING.SCALE_FACTOR]
+var fgd_file_path: String = SETTING_DEFAULTS[SETTING.FGD_FILE_PATH]
+# tb_game_dir should be used instead of game_dir directly
+var game_dir: String = SETTING_DEFAULTS[SETTING.GAME_DIR] setget set_game_dir
+var tb_game_dir: TrenchBroomGameFolder
+var _loaded := false
+var config_file := ConfigFile.new()
 
 onready var plugin_name: String = get_node('../').plugin_name
 onready var directory_name: String = plugin_name
@@ -53,17 +62,6 @@ onready var plugin_path: String = (
 				directory_name
 		) + "/"
 	)
-
-
-# Used for reverse lookup of setting name from SETTING enum
-var _SETTING_KEYS := PoolStringArray(SETTING.keys())
-var scale_factor: float = SETTING_DEFAULTS[SETTING.SCALE_FACTOR]
-var fgd_file_path: String = SETTING_DEFAULTS[SETTING.FGD_FILE_PATH]
-# tb_game_dir should be used instead of game_dir directly
-var game_dir: String = SETTING_DEFAULTS[SETTING.GAME_DIR] setget set_game_dir
-var tb_game_dir: TrenchBroomGameFolder
-var _loaded := false
-var config_file := ConfigFile.new()
 
 
 func _init():

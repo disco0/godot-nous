@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/fish_00_00.lmp-cc64c8a7516d08e2d632ff5c46d2bbb3.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/fish_00_00.lmp"
+dest_files=[ "res://.import/fish_00_00.lmp-cc64c8a7516d08e2d632ff5c46d2bbb3.tres" ]
+
+[params]
+

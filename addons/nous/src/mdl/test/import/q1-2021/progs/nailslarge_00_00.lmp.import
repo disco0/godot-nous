@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/nailslarge_00_00.lmp-e37575f1c5d72c987eece4299e786905.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/nailslarge_00_00.lmp"
+dest_files=[ "res://.import/nailslarge_00_00.lmp-e37575f1c5d72c987eece4299e786905.tres" ]
+
+[params]
+

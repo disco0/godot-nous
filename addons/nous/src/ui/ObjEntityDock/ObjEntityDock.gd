@@ -7,10 +7,18 @@ var dprint := Nous.dprint_for(self)
 
 const MESHINFO = MeshInfo.MESHINFO
 const SETTING = NousSettings.SETTING
+const TBConfigFolderResPath := "res://addons/qodot/game-definitions/trenchbroom/qodot_trenchbroom_config_folder.tres"
+
+export (bool) var BUILD_VERBOSE := true
+
+# @TODO: Move this to setting_changed signal instead of reading it every time
+var output_dir: String setget, get_output_dir
+var _output_dir: String
 
 onready var item_tree: ObjBuilderEntityTree = $VBoxContainer/EntityTreeScrollContainer/ObjBuilderEntityTree
 onready var headers_box: HSplitContainer = $VBoxContainer/Headers
-onready var fgd_button: Button = $VBoxContainer/OpenFGDResButton
+onready var fgd_button: Button = $VBoxContainer/GameDef/OpenFGDResButton
+onready var export_def_button: Button = $VBoxContainer/GameDef/ReexportButton
 onready var test_button: Button = $VBoxContainer/TestTargetButton
 onready var models_button: Button = $VBoxContainer/OpenFolderButton
 onready var build_button: Button = $VBoxContainer/HBoxContainer/BuildButton
@@ -19,11 +27,6 @@ onready var progress_bar: ProgressBar = $VBoxContainer/Progress/Bar
 onready var progress_text: Label = $VBoxContainer/Progress/Text
 onready var update_entity_paths_button: Button = $VBoxContainer/HBoxContainer/UpdateFGDModelPaths
 onready var exporter: ObjExporter = $Proc/ObjExporter
-
-
-# @TODO: Move this to setting_changed signal instead of reading it every time
-var output_dir: String setget, get_output_dir
-var _output_dir: String
 
 
 func _init() -> void:
@@ -192,13 +195,13 @@ func _on_UpdateFGDModelPaths_pressed() -> void:
 
 # TODO: Make into instanceable class so multiple can be active
 var export_start_time_usec: int = -1
-
 var export_time_usec: int = -1
 
 func start_profile(title: String, overwrite := true) -> void:
 	if not overwrite and export_start_time_usec != -1:
 		dprint.error('Profiling timer already started', 'stop_profile')
 	export_start_time_usec = Time.get_ticks_usec()
+
 
 func stop_profile() -> void:
 	if export_start_time_usec == -1:
@@ -219,9 +222,6 @@ func _on_BuildButton_pressed() -> void:
 		return
 
 	build_objs(entinfos)
-
-
-export (bool) var BUILD_VERBOSE := true
 
 
 func _build_dprint(msg: String) -> void:
@@ -390,6 +390,15 @@ func dump_build_debug_data(export_data_arr, ctx := 'on:BuildButton-pressed') -> 
 					dprint.write('        Offset:    %s' % [ datum ], ctx)
 
 
+func _on_ReexportButton_pressed() -> void:
+	dprint.write('Exporting game defintion', 'on:ReexportButton-pressed')
+	# TODO: Just load the resource w/ load and call export setter after getting this working
+	var config := ResourceLoader.load(TBConfigFolderResPath, "", true)
+	dprint.write('Config resource: %s' % [ config ], 'on:ReexportButton-pressed')
+	config.set_export_file()
+	dprint.write('Export file setter called.', 'on:ReexportButton-pressed')
+
+
 func _on_ObjBuilderEntityTree_item_edited() -> void:
 	var edited := item_tree.get_edited()
 	if edited.is_checked(item_tree.COLUMNS.BUILD_BUTTON):
@@ -447,6 +456,7 @@ class EntityExportData:
 	var vert_count := -1
 	var indicies_count := -1
 
+
 	func get_mesh_data() -> Array:
 		if typeof(_mesh_data) == TYPE_NIL or _mesh_data.empty():
 			dprint.write('Rebuilding _mesh_data','get_mesh_data')
@@ -454,11 +464,14 @@ class EntityExportData:
 
 		return _mesh_data
 
+
 	func get_extractor() -> EntityMeshExtractor:
 		return data.extractor
 
+
 	func get_classname() -> String:
 		return data.fgd_class.classname
+
 
 	func build_mesh_data() -> void:
 		_mesh_data.clear()
@@ -497,12 +510,14 @@ class EntityExportData:
 		# Also update vert count for progress
 		update_vert_count()
 
+
 	func update_vert_count() -> void:
 		vert_count = 0
 		for info in _mesh_data:
 			var mesh = info[MESHINFO.MESH]
 			for surf_idx in mesh.get_surface_count():
 				vert_count += mesh.surface_get_arrays(surf_idx)[ArrayMesh.ARRAY_VERTEX].size()
+
 
 	func update_indicies_count() -> void:
 		vert_count = 0
@@ -521,9 +536,11 @@ class EntityExportData:
 								surf_idx,
 							], 'update_indicies_count')
 
+
 	func _init(ent_info: FGDEntityObjectData, build_mesh_data_immediate := true):
 		self.data = ent_info
 		if build_mesh_data_immediate:
 			dprint.write('Immediate build','on:init')
 			self.build_mesh_data()
 			self.update_indicies_count()
+

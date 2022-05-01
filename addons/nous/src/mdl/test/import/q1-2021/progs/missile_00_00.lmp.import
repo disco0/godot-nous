@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/missile_00_00.lmp-9738b8532fe9849391eca6dc897d318c.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/missile_00_00.lmp"
+dest_files=[ "res://.import/missile_00_00.lmp-9738b8532fe9849391eca6dc897d318c.tres" ]
+
+[params]
+

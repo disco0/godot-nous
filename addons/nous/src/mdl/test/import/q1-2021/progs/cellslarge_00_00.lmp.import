@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/cellslarge_00_00.lmp-26ba80df11f656675a8bda23670a5c63.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/cellslarge_00_00.lmp"
+dest_files=[ "res://.import/cellslarge_00_00.lmp-26ba80df11f656675a8bda23670a5c63.tres" ]
+
+[params]
+

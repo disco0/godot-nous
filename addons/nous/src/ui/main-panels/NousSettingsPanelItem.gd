@@ -11,19 +11,22 @@ const SETTING_UI = Nous.Settings.SETTING_UI
 const SETTING_UI_MODE = Nous.Settings.SETTING_UI_MODE
 const UI_MODES = Nous.Settings.SETTING_UI_MODES
 
-var mode: int setget ,get_mode
-
-func get_mode() -> int:
-	return Nous.Settings.SETTING_UI_MODE[get_setting_idx()]
-
-func get_setting_idx() -> int:
-	return SETTING[name]
-
 var value_node: Control
+var mode: int setget ,get_mode
+var _mode: int = -1
+var dialog: SettingPathValueDialog
 
 
 func _ready() -> void:
 	_update_name_label()
+
+
+func get_mode() -> int:
+	return Nous.Settings.SETTING_UI_MODE[get_setting_idx()]
+
+
+func get_setting_idx() -> int:
+	return SETTING[name]
 
 
 func set_setting_name(value: String) -> void:
@@ -62,14 +65,12 @@ func update_value(value) -> void:
 func _initialize_mode() -> void:
 	rebuild(get_mode())
 
-var _mode: int = -1
 
 func rebuild(new_mode: int = get_mode()) -> void:
 	if not is_inside_tree():
 		yield(self, "ready")
 
 	if _mode >= 0 and _mode == new_mode: return
-
 
 	match new_mode:
 		UI_MODES.PATH:
@@ -99,43 +100,19 @@ func rebuild(new_mode: int = get_mode()) -> void:
 func _on_LineEdit_text_entered(new_text: String) -> void:
 	emit_signal('setting_value_changed', new_text, name)
 
+
 func _on_CheckBox_toggled(button_pressed: bool) -> void:
 	emit_signal('setting_value_changed', button_pressed, name)
+
 
 func _on_SpinBox_value_changed(value: float) -> void:
 	emit_signal('setting_value_changed', value, name)
 
 
-#func _get_property_list() -> Array:
-#	var props := [ ]
-#	props.push_back(property_dict('setting_name', TYPE_STRING, -1)) # , 'Name used for child label'))
-#	return props
-#
-#static func category_dict(name: String) -> Dictionary:
-#	return property_dict(name, TYPE_STRING, - 1, "", PROPERTY_USAGE_CATEGORY)
-#
-#static func property_dict(name: String, type: int, hint: int = -1, hint_string: String = "", usage: int = -1) -> Dictionary:
-#	var dict: = {
-#		"name":name,
-#		"type":type
-#	}
-#
-#	if hint != - 1:
-#		dict["hint"] = hint
-#
-#	if hint_string != "":
-#		dict["hint_string"] = hint_string
-#
-#	if usage != - 1:
-#		dict["usage"] = usage
-#
-#	return dict
-
-
 func _on_Label_renamed() -> void:
 	_update_name_label()
 
-var dialog: SettingPathValueDialog
+
 func _on_PathButton_button_pressed() -> void:
 	# Use for current_dir
 	var curr := ($Value/LineEdit as LineEdit).get_text()
@@ -217,3 +194,29 @@ class SettingPathValueDialog extends FileDialog:
 			MODE_OPEN_DIR:
 				print('[Directory Mode]')
 				connect("dir_selected", self, "_confirmed")
+
+
+#func _get_property_list() -> Array:
+#	var props := [ ]
+#	props.push_back(property_dict('setting_name', TYPE_STRING, -1)) # , 'Name used for child label'))
+#	return props
+#
+#static func category_dict(name: String) -> Dictionary:
+#	return property_dict(name, TYPE_STRING, - 1, "", PROPERTY_USAGE_CATEGORY)
+#
+#static func property_dict(name: String, type: int, hint: int = -1, hint_string: String = "", usage: int = -1) -> Dictionary:
+#	var dict: = {
+#		"name":name,
+#		"type":type
+#	}
+#
+#	if hint != - 1:
+#		dict["hint"] = hint
+#
+#	if hint_string != "":
+#		dict["hint_string"] = hint_string
+#
+#	if usage != - 1:
+#		dict["usage"] = usage
+#
+#	return dict

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/s_light.mdl-ea9d20c66cea33e8912d65ff4c8504f7.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/s_light.mdl"
+dest_files=[ "res://.import/s_light.mdl-ea9d20c66cea33e8912d65ff4c8504f7.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

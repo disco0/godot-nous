@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/wizard.mdl-29fa0e775651cdf716f3d7c4739d49a4.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/wizard.mdl"
+dest_files=[ "res://.import/wizard.mdl-29fa0e775651cdf716f3d7c4739d49a4.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

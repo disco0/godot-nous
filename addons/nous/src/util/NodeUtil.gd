@@ -1,5 +1,6 @@
 class_name NodeUtils
 
+
 static func FindNodeOutsideTree(node: Node, path: String) -> Node:
 	if node.get_child_count() == 0:
 		push_warning('[FindNodeOutsideTree] Node %s has no children.' % [ node ])

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/fish.mdl-0146b8d38990afe4fe4bd0b79ae539ce.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/fish.mdl"
+dest_files=[ "res://.import/fish.mdl-0146b8d38990afe4fe4bd0b79ae539ce.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

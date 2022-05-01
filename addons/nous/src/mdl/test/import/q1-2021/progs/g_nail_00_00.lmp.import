@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/g_nail_00_00.lmp-76a41be5984f82da5121e830eb3b8a14.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/g_nail_00_00.lmp"
+dest_files=[ "res://.import/g_nail_00_00.lmp-76a41be5984f82da5121e830eb3b8a14.tres" ]
+
+[params]
+

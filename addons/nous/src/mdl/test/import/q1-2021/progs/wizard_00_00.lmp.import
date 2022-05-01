@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/wizard_00_00.lmp-2c60cf101630046c8e49cbf186caf702.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/wizard_00_00.lmp"
+dest_files=[ "res://.import/wizard_00_00.lmp-2c60cf101630046c8e49cbf186caf702.tres" ]
+
+[params]
+

@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/shellslarge_00_00.lmp-b79c93058066aee5469632cae8c66f89.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/shellslarge_00_00.lmp"
+dest_files=[ "res://.import/shellslarge_00_00.lmp-b79c93058066aee5469632cae8c66f89.tres" ]
+
+[params]
+

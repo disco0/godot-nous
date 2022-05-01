@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/enforcer.mdl-45d4cbd2c8dccb9c10bec9929a537cd5.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/enforcer.mdl"
+dest_files=[ "res://.import/enforcer.mdl-45d4cbd2c8dccb9c10bec9929a537cd5.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

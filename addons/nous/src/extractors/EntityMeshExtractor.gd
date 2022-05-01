@@ -6,8 +6,8 @@ class_name EntityMeshExtractor
 # example)
 #
 
-var dprint := DebugPrint.Builder.get_for(self)
 
+var dprint = Nous.dprint_for(self)
 
 const ANIMATION_SEARCH_OVERRIDE_DISABLED := true
 # Development flag: When enabled AABBs will be generated for each mesh, and used to calculate a

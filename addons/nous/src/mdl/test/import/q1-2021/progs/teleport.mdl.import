@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/teleport.mdl-5b5dc6f0c73631855ba2571cbd547031.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/teleport.mdl"
+dest_files=[ "res://.import/teleport.mdl-5b5dc6f0c73631855ba2571cbd547031.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

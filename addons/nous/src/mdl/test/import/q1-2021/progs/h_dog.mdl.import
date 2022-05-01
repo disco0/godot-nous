@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/h_dog.mdl-2ec494144a71cda2c30b7f1d70679f14.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/h_dog.mdl"
+dest_files=[ "res://.import/h_dog.mdl-2ec494144a71cda2c30b7f1d70679f14.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

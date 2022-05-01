@@ -2,8 +2,16 @@ tool
 class_name CivilianMeshExtractor
 extends EntityMeshExtractor
 
+
+# Resolves base
+var SkeletonNodeLeafPath := 'Nemesis/Armature/Skeleton'
+var AnimationPlayerLeafPath := 'Nemesis/AnimationPlayer'
+var animation: String = 'Run'
+
+
 func get_class() -> String:
 	return 'CivilianMeshExtractor'
+
 
 #func _init() -> void:
 #	set_name(get_class())
@@ -11,10 +19,6 @@ func get_class() -> String:
 func can_target(node: Node) -> bool:
 	return node.name.begins_with('Civilian')
 
-# Resolves base
-var SkeletonNodeLeafPath := 'Nemesis/Armature/Skeleton'
-var AnimationPlayerLeafPath := 'Nemesis/AnimationPlayer'
-var animation: String = 'Run'
 
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():

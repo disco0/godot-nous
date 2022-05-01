@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/v_axe.mdl-82c5b37035f98c9f0bde18f5f0355fdd.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/v_axe.mdl"
+dest_files=[ "res://.import/v_axe.mdl-82c5b37035f98c9f0bde18f5f0355fdd.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

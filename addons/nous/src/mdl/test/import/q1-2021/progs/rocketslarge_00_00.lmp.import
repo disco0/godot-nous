@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/rocketslarge_00_00.lmp-0ae18772e0ba622f2596645013774d37.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/rocketslarge_00_00.lmp"
+dest_files=[ "res://.import/rocketslarge_00_00.lmp-0ae18772e0ba622f2596645013774d37.tres" ]
+
+[params]
+

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/lavaball.mdl-c2edc32dece68a7cbd3da412cea07f31.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/lavaball.mdl"
+dest_files=[ "res://.import/lavaball.mdl-c2edc32dece68a7cbd3da412cea07f31.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

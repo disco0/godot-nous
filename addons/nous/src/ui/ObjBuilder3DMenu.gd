@@ -5,6 +5,10 @@ extends HBoxContainer
 
 var dprint := Nous.dprint_for(self)
 
+var edited: Spatial setget, get_derefed_edited_weakref
+var edited_ref := weakref(null)
+var last_editable_node_id := -1
+var has_handle: bool setget, _get_has_handle
 
 onready var obj_builder = $ObjBuilder
 onready var scale_factor_box: SpinBox = $ScaleFactor / SpinBox
@@ -31,48 +35,41 @@ func update_extractor_info_label(extractor = null) -> void:
 	extractor_info_label.set_visible(true)
 
 
-var edited_ref := weakref(null)
-
 func get_derefed_edited_weakref() -> Spatial:
 	return edited_ref.get_deref()
 
-var edited: Spatial setget, get_derefed_edited_weakref
-
-
-# Debugging
-var last_event_stage := '<NONE>'
 
 func _init() -> void:
 	dprint.write('', 'on:init')
-	last_event_stage = 'INIT'
+
 
 func _ready() -> void:
 	dprint.write('', 'on:ready')
-	last_event_stage = 'READY'
 	dprint.write('Initializing UI input values', 'on:ready')
 	scale_factor_box.set_value(Nous.Settings.scale_factor)
 	dprint.write('End UI values initialization', 'on:ready')
 
+
 func _enter_tree() -> void:
 	dprint.write('', 'on:enter-tree')
-	last_event_stage = 'IN-TREE'
 
 
 func clear_edited() -> void:
 	edited_ref = weakref(null)
 
+
 func edit(node: Node) -> void:
 	if editable(node):
 		edited_ref = weakref(node)
 
+
 func _get_has_handle() -> bool:
 	return is_instance_valid(edited_ref.get_ref())
-var has_handle: bool setget, _get_has_handle
+
 
 func handles(object) -> bool:
 	return editable(object)
 
-var last_editable_node_id := -1
 
 func editable(node) -> bool:
 	if not (node is Node and node.is_inside_tree()):
@@ -88,7 +85,7 @@ func editable(node) -> bool:
 		return true
 
 	if not is_instance_valid(obj_builder.extractors):
-		dprint.write('[WARNING] [Stage:%s] obj_builder.extractors not valid instance.' % [ last_event_stage ], 'editable')
+		#dprint.write('[WARNING] [Stage:%s] obj_builder.extractors not valid instance.' % [ last_event_stage ], 'editable')
 		return false
 
 	var resolved_extractor = obj_builder.extractors.get_extractor_for_node((node as Node).get_tree().edited_scene_root)
@@ -119,6 +116,5 @@ func _on_ScaleFactor_value_changed(value: float) -> void:
 
 
 func _exit_tree() -> void:
-	last_event_stage = 'EXIT-TREE'
 	obj_builder = null
 	scale_factor_box = null

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/h_mega.mdl-d2c8753d2928cb74d8f99d006d024553.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/h_mega.mdl"
+dest_files=[ "res://.import/h_mega.mdl-d2c8753d2928cb74d8f99d006d024553.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

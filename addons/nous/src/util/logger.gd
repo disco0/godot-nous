@@ -1,17 +1,17 @@
 tool
-class_name DebugPrint
 
+
+const Colorful := preload('./logger-colors.gd')
 const Options := { "USE_COLORFUL_CONSOLE": true }
-
 const DEFAULT_COLORS := {
-	BASE    = Colorful.GREEN,
+	BASE = Colorful.GREEN,
 	CONTEXT = Colorful.GREEN,
 }
 
+
 # Based on logger implementation in Zylann's hterrain plugin
 # https://github.com/Zylann/godot_heightmap_plugin/blob/master/addons/zylann.hterrain/util/logger.gd
-
-class Base:
+class DebugPrintBase:
 	const PREFIXES := {
 		WARNING = '[WARNING] ',
 		DEBUG   = '[Debug] ',
@@ -43,13 +43,18 @@ class Base:
 
 	const Template      := "{0}[{1}{2}] {3}"
 	const ColorTemplate := "%s%s%s[%s]%s %s%s"
+	const Colorful = preload('./logger-colors.gd')
+	const DEFAULT_COLORS := {
+		BASE = Colorful.GREEN,
+		CONTEXT = Colorful.GREEN,
+	}
 
 	var colors := {
 		base    = DEFAULT_COLORS.BASE,
 		context = DEFAULT_COLORS.CONTEXT
 	}
 
-	static func PrintStyled(logger: Base, context: String, body: String, timestamp := true) -> void:
+	static func PrintStyled(logger: DebugPrintBase, context: String, body: String, timestamp := true) -> void:
 
 		for pair in [
 				[ Colorful.BLACK_BRIGHT, (TimestampPrefix() if timestamp == true else "") ],
@@ -82,7 +87,7 @@ class Base:
 
 
 	# Main log building function for logging methods
-	static func ApplyTemplate(logger: Base, context: String, body: String, timestamp := true) -> String:
+	static func ApplyTemplate(logger: DebugPrintBase, context: String, body: String, timestamp := true) -> String:
 		return Template.format([
 			TimestampPrefix() if timestamp == true else "",
 			logger.base_context,
@@ -101,7 +106,7 @@ class Base:
 		else:
 			return Builder.get_for(context, self)
 
-class Verbose extends Base:
+class Verbose extends DebugPrintBase:
 	func _init(pbase_context: String, context_color = null).(pbase_context, context_color):
 		pass
 
@@ -109,7 +114,7 @@ class Verbose extends Base:
 		print(ApplyTemplate(self, ctx, message.insert(0, PREFIXES.DEBUG)))
 
 class Builder:
-	static func get_for(context, parent: Base = null, context_color: String = DEFAULT_COLORS.BASE) -> Base:
+	static func get_for(context, parent: DebugPrintBase = null, context_color: String = DEFAULT_COLORS.BASE) -> DebugPrintBase:
 		# Note: don't store the owner. If it's a Reference, it could create a cycle
 		var context_str: String
 		match typeof(context):
@@ -130,9 +135,9 @@ class Builder:
 					context_str = context.get_script().resource_path.get_file().get_basename()
 
 		# Allow for quick extensions
-		if parent is Base:
+		if parent is DebugPrintBase:
 			context_str = context_str.insert(0, parent.base_context + ':')
 
 		if OS.is_stdout_verbose():
 			return Verbose.new(context_str, context_color)
-		return Base.new(context_str, context_color)
+		return DebugPrintBase.new(context_str, context_color)

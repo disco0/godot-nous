@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/s_spike.mdl-67525a4463b9c0cb61e406554371c02a.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/s_spike.mdl"
+dest_files=[ "res://.import/s_spike.mdl-67525a4463b9c0cb61e406554371c02a.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

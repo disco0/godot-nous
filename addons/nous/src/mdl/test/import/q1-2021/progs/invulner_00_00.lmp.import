@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/invulner_00_00.lmp-533d5474eeb87af1088e22a3677d5646.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/invulner_00_00.lmp"
+dest_files=[ "res://.import/invulner_00_00.lmp-533d5474eeb87af1088e22a3677d5646.tres" ]
+
+[params]
+

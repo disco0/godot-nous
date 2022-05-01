@@ -1,12 +1,15 @@
 tool
 class_name EntityMeshExtractors
 
-static func TrimSuffix(name: String) -> String:
-	return name.trim_suffix('MeshExtractor')
+
+# Array of extractor implementation instances to search through
+var instances: Array = [ ]
+
 
 func _init(immediate_register := true):
 	if immediate_register:
 		register_extractors()
+
 
 func is_scene_extractable(scene) -> bool:
 	var name = scene.name if scene is Node else scene
@@ -16,8 +19,6 @@ func is_scene_extractable(scene) -> bool:
 
 	return false
 
-# Array of extractor implementation instances to search through
-var instances: Array = [ ]
 
 # Receives an implementation, and calls its static Instance method and checks if has been
 # previously registered before adding it.
@@ -30,6 +31,7 @@ func register(extractor):
 			return
 
 	instances.push_back(extractor_instance)
+
 
 func get_extractor_for_node(node: Node) -> EntityMeshExtractor:
 	var node_name = node.name if node is Node else node
@@ -45,6 +47,7 @@ func get_extractor_for_node(node: Node) -> EntityMeshExtractor:
 
 	return null
 
+
 func register_extractors() -> void:
 	register(PlayerMeshExtractor)
 	register(CivilianMeshExtractor)
@@ -54,4 +57,5 @@ func register_extractors() -> void:
 	register(CarMeshExtractor)
 
 
-
+static func TrimSuffix(name: String) -> String:
+	return name.trim_suffix('MeshExtractor')

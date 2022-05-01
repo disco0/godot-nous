@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/oldone.mdl-4b60d9fdf8f0698cd356a230a690c89a.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/oldone.mdl"
+dest_files=[ "res://.import/oldone.mdl-4b60d9fdf8f0698cd356a230a690c89a.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

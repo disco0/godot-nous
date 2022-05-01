@@ -2,8 +2,10 @@ tool
 class_name PropMeshExtractor
 extends EntityMeshExtractor
 
+
 func get_class() -> String:
 	return 'PropMeshExtractor'
+
 
 func can_target(node: Node) -> bool:
 	var name = node.get_name()
@@ -13,6 +15,7 @@ func can_target(node: Node) -> bool:
 	return name.begins_with('Prop_') \
 		or name.begins_with('Health_Kit') \
 		or name in [ 'Crab', 'fullpizza' ]
+
 
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():

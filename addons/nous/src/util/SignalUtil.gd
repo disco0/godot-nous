@@ -1,5 +1,6 @@
 tool
-class_name SignalUtil
+class_name SignalUtils
+
 
 static func DisconnectIfConnected(obj: Object, obj_signal: String, target: Object, target_method: String) -> void:
 	if obj and target:

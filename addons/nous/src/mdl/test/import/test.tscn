@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/nous/src/mdl/test/import/q1-2021/progs/shambler.mdl" type="ArrayMesh" id=1]
+
+[node name="Spatial" type="Spatial"]
+
+[node name="shambler" type="MeshInstance" parent="."]
+mesh = ExtResource( 1 )

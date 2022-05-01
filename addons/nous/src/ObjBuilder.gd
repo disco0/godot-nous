@@ -2,19 +2,20 @@ tool
 class_name ObjBuilder
 extends Node
 
-var dprint := Nous.dprint_for(self)
 
+var dprint = Nous.dprint_for(self)
 
 # Path for in-game generation
 const OBJ_EXPORT_BASE_DIR: String = 'user://obj-gen'
 # Default path for in editor (getter used otherwise)
 const GAME_FOLDER_EXPORT_BASE_DIR: String = 'res://Maps/models'
+const MESHINFO = MeshInfo.MESHINFO
 
-
-onready var obj_exporter := $ObjExporter
 var extractors := EntityMeshExtractors.new()
 var scale_factor setget _set_scale_factor, _get_scale_factor
 var output_dir setget, _get_output_dir
+
+onready var obj_exporter := $ObjExporter
 
 
 func _init():
@@ -61,7 +62,6 @@ func get_node_export_path(root_node: Node, out_dir: String = "") -> String:
 
 	return out_dir.plus_file(root_node.get_tree().edited_scene_root.filename.get_file().get_basename() + '.obj')
 
-const MESHINFO = MeshInfo.MESHINFO
 
 # Generalized version of initial player test that attempts to match an extractor based on passed
 # scene Node's name.

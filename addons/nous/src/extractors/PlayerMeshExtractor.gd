@@ -2,24 +2,28 @@ tool
 class_name PlayerMeshExtractor
 extends EntityMeshExtractor
 
-func get_class() -> String:
-	return 'PlayerMeshExtractor'
-
-#func _init() -> void:
-#	set_name(get_class())
-
-func can_target(node: Node) -> bool:
-	return node.name == 'Player'
 
 var node_whitelist := [
 	"Head_Mesh", "Torso_Mesh",
 	# Shades
 	"Plane001"
 ]
-
 var SkeletonNodeLeafPath := 'Body_Mesh/Armature/Skeleton'
 var AnimationPlayerLeafPath := 'Body_Mesh/AnimationPlayer'
 var animation: String = 'Phone'
+
+
+func get_class() -> String:
+	return 'PlayerMeshExtractor'
+
+
+#func _init() -> void:
+#	set_name(get_class())
+
+
+func can_target(node: Node) -> bool:
+	return node.name == 'Player'
+
 
 func resolve_meshes(node: Node = target) -> Array:
 	var meshes = [ ]

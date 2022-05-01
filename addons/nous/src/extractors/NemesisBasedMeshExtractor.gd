@@ -3,6 +3,10 @@ class_name NemesisBasedMeshExtractor
 extends EntityMeshExtractor
 
 
+# Resolves base
+var SkeletonNodeLeafPath := 'Nemesis/Armature/Skeleton'
+
+
 func get_class() -> String:
 	return 'NemesisBasedMeshExtractor'
 
@@ -20,7 +24,11 @@ func resolve_meshes(node: Node = target):
 		dprint.write('Resolving meshes, passed node path %s' % [ node.get_tree().get_edited_scene_root().get_path_to(node) ], 'resolve_meshes')
 	var meshes = [ ]
 
-	var base: Skeleton = node.get_node(SkeletonNodeLeafPath)
+	# @NOTE: Widening the cast to handle weird edge case (that I made)
+	#var base: Skeleton = node.get_node(SkeletonNodeLeafPath)
+	var base: Spatial = node.get_node(SkeletonNodeLeafPath)
+
+
 	if not is_instance_valid(base):
 		dprint.write('[WARNING] Failed to get skeleton child node with leaf path: %s' % [ SkeletonNodeLeafPath ], 'resolve_meshes')
 		return meshes
@@ -52,7 +60,3 @@ func resolve_meshes(node: Node = target):
 # adding another separate extractor implementation
 static func FindNemesisNode(node: Node) -> Spatial:
 	return node.find_node('Nemesis', true) as Spatial
-
-
-# Resolves base
-var SkeletonNodeLeafPath := 'Nemesis/Armature/Skeleton'

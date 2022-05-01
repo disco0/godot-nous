@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/health100_00_03.lmp-f666b223b82404205fc6c766b5a4defa.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/health100_00_03.lmp"
+dest_files=[ "res://.import/health100_00_03.lmp-f666b223b82404205fc6c766b5a4defa.tres" ]
+
+[params]
+

@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/ogre_00_00.lmp-1d7205549cf0a6f30615e7cae0d90816.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/ogre_00_00.lmp"
+dest_files=[ "res://.import/ogre_00_00.lmp-1d7205549cf0a6f30615e7cae0d90816.tres" ]
+
+[params]
+

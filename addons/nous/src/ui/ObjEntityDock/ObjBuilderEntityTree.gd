@@ -4,11 +4,7 @@ extends Tree
 
 signal update_request()
 
-export (bool) var filter_case_sensitive := true
-
-
 var dprint := Nous.dprint_for(self)
-
 
 const UNKNOWN_EXTRACTOR_COLOR_MOD := Color(1.0, 1.0, 1.0, 0.4)
 const TREE_ITEM_DATA_KEYS := {
@@ -21,11 +17,14 @@ enum COLUMNS {
 }
 const ITEM_BUILD_BUTTON_MIN_WIDTH := 25
 
+export (bool) var filter_case_sensitive := true
+
 var buildable_searcher: FGDEntitySceneSearch
 var extractors := Nous.Extractors
 var ent_infos := [ ]
 var root_item: TreeItem
 var classname_filter := ""
+var _update_queued := false
 
 
 func _init() -> void:
@@ -75,7 +74,6 @@ func _exit_tree() -> void:
 	pass
 
 
-var _update_queued := false
 func _queue_update():
 	if not is_inside_tree():
 		return

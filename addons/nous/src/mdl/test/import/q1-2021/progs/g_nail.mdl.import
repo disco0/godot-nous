@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/g_nail.mdl-b1ca9d1b6d7b4636067a0475ef775114.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/g_nail.mdl"
+dest_files=[ "res://.import/g_nail.mdl-b1ca9d1b6d7b4636067a0475ef775114.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

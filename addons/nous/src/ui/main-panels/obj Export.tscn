@@ -9,7 +9,7 @@ margin_bottom = 378.0
 
 [node name="HorizPadContainer" type="HBoxContainer" parent="."]
 margin_right = 92.0
-margin_bottom = 45.0
+margin_bottom = 37.0
 
 [node name="HPad" type="Label" parent="HorizPadContainer"]
 margin_right = 8.0
