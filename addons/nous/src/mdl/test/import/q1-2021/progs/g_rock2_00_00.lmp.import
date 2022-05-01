@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/g_rock2_00_00.lmp-1b48ce8bbc2f53ce2c99d17406d4e784.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/g_rock2_00_00.lmp"
+dest_files=[ "res://.import/g_rock2_00_00.lmp-1b48ce8bbc2f53ce2c99d17406d4e784.tres" ]
+
+[params]
+

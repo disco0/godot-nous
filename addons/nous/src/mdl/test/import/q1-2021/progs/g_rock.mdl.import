@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/g_rock.mdl-f3cf851c58ff995a5029cf355f5051e4.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/g_rock.mdl"
+dest_files=[ "res://.import/g_rock.mdl-f3cf851c58ff995a5029cf355f5051e4.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/v_shot_00_00.lmp-d8c14aba09efa5e9ebae0f1c9d49353b.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/v_shot_00_00.lmp"
+dest_files=[ "res://.import/v_shot_00_00.lmp-d8c14aba09efa5e9ebae0f1c9d49353b.tres" ]
+
+[params]
+

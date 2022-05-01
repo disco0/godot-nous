@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/gib2.mdl-e88065438ad4e2a71ea1ada7a106490e.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/gib2.mdl"
+dest_files=[ "res://.import/gib2.mdl-e88065438ad4e2a71ea1ada7a106490e.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

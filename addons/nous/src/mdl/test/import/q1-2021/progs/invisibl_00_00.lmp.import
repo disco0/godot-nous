@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/invisibl_00_00.lmp-c94369f7dbe46bc50907a9018b263951.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/invisibl_00_00.lmp"
+dest_files=[ "res://.import/invisibl_00_00.lmp-c94369f7dbe46bc50907a9018b263951.tres" ]
+
+[params]
+

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/grenade.mdl-45c176d0a0258315aa4ce1324b6ec87d.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/grenade.mdl"
+dest_files=[ "res://.import/grenade.mdl-45c176d0a0258315aa4ce1324b6ec87d.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/soldier.mdl-2eb46418d2db7a16c2e35fb8530b8572.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/soldier.mdl"
+dest_files=[ "res://.import/soldier.mdl-2eb46418d2db7a16c2e35fb8530b8572.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

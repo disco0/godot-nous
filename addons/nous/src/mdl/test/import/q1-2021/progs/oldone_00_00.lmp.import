@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/oldone_00_00.lmp-3d5979e0bb2424cd54a7ab38404d5748.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/oldone_00_00.lmp"
+dest_files=[ "res://.import/oldone_00_00.lmp-3d5979e0bb2424cd54a7ab38404d5748.tres" ]
+
+[params]
+

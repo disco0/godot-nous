@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/shalrath.mdl-d9e6b9396e19d3dc686db1b9b5dd3f5c.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/shalrath.mdl"
+dest_files=[ "res://.import/shalrath.mdl-d9e6b9396e19d3dc686db1b9b5dd3f5c.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

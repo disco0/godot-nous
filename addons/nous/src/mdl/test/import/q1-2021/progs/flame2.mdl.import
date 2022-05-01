@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/flame2.mdl-56ef7ced93353353aa6e5ba63e158122.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/flame2.mdl"
+dest_files=[ "res://.import/flame2.mdl-56ef7ced93353353aa6e5ba63e158122.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

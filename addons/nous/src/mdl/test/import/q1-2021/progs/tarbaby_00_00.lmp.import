@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/tarbaby_00_00.lmp-b5c62796f72c6663567a0cb13997d8dc.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/tarbaby_00_00.lmp"
+dest_files=[ "res://.import/tarbaby_00_00.lmp-b5c62796f72c6663567a0cb13997d8dc.tres" ]
+
+[params]
+

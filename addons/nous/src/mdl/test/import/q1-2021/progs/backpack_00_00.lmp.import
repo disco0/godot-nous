@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/backpack_00_00.lmp-ba7c9a73fdff7d076570e63abc53093a.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/backpack_00_00.lmp"
+dest_files=[ "res://.import/backpack_00_00.lmp-ba7c9a73fdff7d076570e63abc53093a.tres" ]
+
+[params]
+

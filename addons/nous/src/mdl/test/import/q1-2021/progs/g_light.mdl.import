@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/g_light.mdl-2f755d4642f85e049402ce0ac12e8be2.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/g_light.mdl"
+dest_files=[ "res://.import/g_light.mdl-2f755d4642f85e049402ce0ac12e8be2.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

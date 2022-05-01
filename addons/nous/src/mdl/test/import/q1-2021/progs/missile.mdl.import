@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/missile.mdl-3b4b27c8f0bab91592f92bf18828b814.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/missile.mdl"
+dest_files=[ "res://.import/missile.mdl-3b4b27c8f0bab91592f92bf18828b814.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

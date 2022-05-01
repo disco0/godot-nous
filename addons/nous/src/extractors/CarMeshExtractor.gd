@@ -2,11 +2,14 @@ tool
 class_name CarMeshExtractor
 extends EntityMeshExtractor
 
+
 func get_class() -> String:
 	return 'CarMeshExtractor'
 
+
 func can_target(node: Node) -> bool:
 	return node.name.begins_with('Car')
+
 
 func resolve_meshes(node: Node = target) -> Array:
 	if node.is_inside_tree():

@@ -1,6 +1,7 @@
 tool
 class_name TrenchBroomGameFolder
 
+
 const MODELS_LEAF     := 'models'
 const MODELS_TEX_LEAF := MODELS_LEAF + '/textures'
 
@@ -11,8 +12,9 @@ var path:           String setget _set_path
 
 
 func _init(game_folder_path: String):
+	if not OS.has_feature("editor"): return
 	var dir := Directory.new()
-	if game_folder_path == null or game_folder_path == "" or not dir.dir_exists(game_folder_path):
+	if game_folder_path == null or game_folder_path == "" or (Engine.editor_hint and not dir.dir_exists(game_folder_path + "/")):
 		push_error('Invalid trenchbroom game base directory <%s>' % [ game_folder_path ])
 		return
 

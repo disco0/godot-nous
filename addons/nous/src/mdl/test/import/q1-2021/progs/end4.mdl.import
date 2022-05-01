@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/end4.mdl-d90781c60b83ae6eec5e8aa294cc7b70.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/end4.mdl"
+dest_files=[ "res://.import/end4.mdl-d90781c60b83ae6eec5e8aa294cc7b70.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

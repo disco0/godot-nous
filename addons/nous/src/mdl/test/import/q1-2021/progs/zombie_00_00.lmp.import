@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/zombie_00_00.lmp-7ce04478c57269fdcee005386f0e4d7f.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/zombie_00_00.lmp"
+dest_files=[ "res://.import/zombie_00_00.lmp-7ce04478c57269fdcee005386f0e4d7f.tres" ]
+
+[params]
+

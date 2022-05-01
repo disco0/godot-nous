@@ -2,18 +2,19 @@ tool
 extends EditorPlugin
 
 var plugin := self
-var dprint := preload("./util/logger.gd").Builder.get_for('NousPlugin')
+var dprint = load(plugin_path.plus_file("src/util/logger.gd")).Builder.get_for('NousPlugin')
 
 const MAIN_PANEL_ENABLED := true
 const HANDLES_DUMP_OBJ_PREVIEW := true
 const HANDLES_MAIN_SCREEN_WHITELIST := [ '3D' ]
 
-const plugin_name    := 'nous'
-const plugin_path    := "res://addons/" + plugin_name
-const plugin_ui_name := 'Nous'
+const plugin_name     := 'nous'
+const plugin_path     := "res://addons/" + plugin_name
+const plugin_ui_name  := 'Nous'
+const MainPanelRes    := preload("./ui/main-panels/MainPanel.tscn")
+const MdlImportPlugin := preload('./mdl/mdl_importer/mdl_importer.gd')
 
-const MainPanelRes := preload("./ui/main-panels/MainPanel.tscn")
-
+var mdl_import:              MdlImportPlugin
 var main_panel_instance:     Control
 var last_scratch_instance:   EditorScript
 var objbuild:                ObjBuilderManager
@@ -42,6 +43,9 @@ func _enter_tree() -> void:
 	Nous.add_child(export_obj_tool)
 	export_obj_tool.register_plugin_init(self)
 
+	mdl_import = MdlImportPlugin.new()
+	add_import_plugin(mdl_import)
+
 	if MAIN_PANEL_ENABLED:
 		dprint.write('Adding main panel', 'on:enter-tree')
 		main_panel_instance = MainPanelRes.instance()
@@ -68,6 +72,10 @@ func _destroy_interface() -> void:
 
 	if is_instance_valid(export_obj_tool):
 		export_obj_tool.queue_free()
+
+	if is_instance_valid(mdl_import):
+		remove_import_plugin(mdl_import)
+		mdl_import.queue_free()
 
 
 func _exit_tree() -> void:
@@ -119,10 +127,6 @@ func handles(object: Object) -> bool:
 		return false
 
 	return false
-
-
-func run_scratch_script(_arg):
-	last_scratch_instance = ResourceLoader.load('res://addons/nous/src/tool-menu-scratch.gd', "", false).new(plugin)
 
 
 #region Main Screen Changes
@@ -191,13 +195,3 @@ func handles_debug(object: Node) -> void:
 		dprint.write("@%s has no parent node." % [ object ], 'handles')
 
 #endregion Debugging
-
-
-# @TODO: Put this in its own separate node
-func _input(event):
-	if event is InputEventKey:
-		if event.pressed:
-			if event.scancode == KEY_F7:
-				print("\n\n")
-				run_scratch_script(null)
-				print("\n\n")

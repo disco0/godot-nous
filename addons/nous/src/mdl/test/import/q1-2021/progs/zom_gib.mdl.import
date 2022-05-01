@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/zom_gib.mdl-8dc9e805329944f73de24e41dd8b3e15.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/zom_gib.mdl"
+dest_files=[ "res://.import/zom_gib.mdl-8dc9e805329944f73de24e41dd8b3e15.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

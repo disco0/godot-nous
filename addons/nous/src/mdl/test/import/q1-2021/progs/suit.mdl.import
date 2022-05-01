@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/suit.mdl-7d6b5beb1ff6c24b0bff5f79d174a9ec.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/suit.mdl"
+dest_files=[ "res://.import/suit.mdl-7d6b5beb1ff6c24b0bff5f79d174a9ec.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

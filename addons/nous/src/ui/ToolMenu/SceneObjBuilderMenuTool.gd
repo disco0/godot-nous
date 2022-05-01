@@ -2,6 +2,7 @@ tool
 class_name SceneObjBuilderMenuTool
 extends Node
 
+
 const MESHINFO = MeshInfo.MESHINFO
 
 var dprint := Nous.dprint_for(self)
@@ -37,7 +38,7 @@ func assert_attach_base():
 
 func _init(_plugin = null):
 	name = 'SceneObjBuilderMenuTool'
-	dprint.colors.context = Colorful.BLUE_BRIGHT
+	dprint.colors.context = dprint.Colorful.BLUE_BRIGHT
 	dprint.write('', 'on:init')
 
 	# Handle refreshes

@@ -12,6 +12,7 @@ tool
 var interface: EditorInterface = EditorScript.new().get_editor_interface()
 var editor_settings := interface.get_editor_settings()
 
+
 var font_setting_path: String = 'interface/editor/code_font' setget _set_font_setting_path
 func _set_font_setting_path(new_path: String) -> void:
 	if not editor_settings.has_setting(new_path):
@@ -19,15 +20,19 @@ func _set_font_setting_path(new_path: String) -> void:
 	font_setting_path = new_path
 	_update_font_path()
 
+
 func _update_font_path():
 	_font_path = editor_settings.get_setting(font_setting_path)
+
 
 var _font_path: String
 func _get_font_path() -> String:
 	return _font_path
 
+
 func _init() -> void:
 	_update_font_path()
+
 
 func update() -> void:
 	print('Attempting update of font data from configured path: <%s>' % [ _font_path ])

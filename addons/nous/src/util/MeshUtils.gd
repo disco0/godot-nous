@@ -9,16 +9,23 @@ const MESHINSTANCE_GROUP_BLACKLIST_BASE := 'obj-no-export'
 const MESHINSTANCE_GROUP_BLACKLIST := [
 	MESHINSTANCE_GROUP_BLACKLIST_BASE
 ]
-
 const MESH_UV_TRANSFORM := Vector2(1.0, -1.0)
 const MESH_UV_TRANSFORM_OFFSET := Vector2(0.0, 1.0)
+
+
+# @NOTE: AABB.get_center not in stable atm
+#
+# https://docs.godotengine.org/en/latest/classes/class_aabb.html#class-aabb-method-get-center
+# Returns the center of the AABB, which is equal to position + (size / 2).
+static func GetAABBCenter(aabb: AABB) -> Vector3:
+	return aabb.position + (aabb.size / 2)
 
 
 static func ApplyAABBToMesh(mesh: Mesh, aabb: AABB, inverse_scale_factor: float) -> ArrayMesh:
 	var mdt := MeshDataTool.new()
 	var processed := ArrayMesh.new()
-	# right????
-	var offset: Vector3 = -1.0 * aabb.get_center() * inverse_scale_factor
+	#var offset: Vector3 = -1.0 * aabb.get_center() * inverse_scale_factor
+	var offset: Vector3 = -1.0 * GetAABBCenter(aabb) * inverse_scale_factor
 
 	# Iterate through surfaces adding/transforming/appending to new processed one at a time
 	var surf_count := mesh.get_surface_count()
@@ -140,7 +147,7 @@ static func CollectChildMeshes(base_node: Spatial, meshes: Array, only_visible: 
 
 
 class ChildMeshSearch:
-	var dprint := preload('./logger.gd').Builder.get_for(self)
+	var dprint = preload('./logger.gd').Builder.get_for(self)
 
 	var group_blacklist := MESHINSTANCE_GROUP_BLACKLIST.duplicate()
 	# Blacklist matches will stop recursive search when enabled
@@ -171,6 +178,7 @@ class ChildMeshSearch:
 		# Check for empty blacklist and disable blacklisting entirely if empty
 		if group_blacklist.size() == 0:
 			group_blacklist_enabled = false
+
 		CollectChildren(base,
 				meshes,
 				node_name_whitelist if typeof(node_name_whitelist) == TYPE_ARRAY else _whitelist,
@@ -247,6 +255,7 @@ class ChildMeshSearch:
 			if group in group_blacklist:
 				return true
 		return false
+
 
 	static func CollectTransform(base: Spatial, minst: Spatial, in_tree) -> Transform:
 		return (

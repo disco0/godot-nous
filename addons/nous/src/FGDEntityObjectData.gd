@@ -21,7 +21,6 @@ func _init(fgd_class: QodotFGDPointClass, extractor = null):
 		self.extractor = Nous.Extractors.get_extractor_for_node(_instance)
 
 
-
 func set_fgd_class(fgd: QodotFGDPointClass):
 	if fgd is QodotFGDPointClass:
 		fgd_class = fgd
@@ -35,6 +34,7 @@ func set_fgd_class(fgd: QodotFGDPointClass):
 
 func get_scene() -> PackedScene:
 	return fgd_class.scene_file
+
 
 func get_scene_path() -> String:
 	if scene is PackedScene:

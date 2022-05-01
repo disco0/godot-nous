@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/quaddama_00_00.lmp-16d942babaa9f89a8874f4d3d292771f.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/quaddama_00_00.lmp"
+dest_files=[ "res://.import/quaddama_00_00.lmp-16d942babaa9f89a8874f4d3d292771f.tres" ]
+
+[params]
+

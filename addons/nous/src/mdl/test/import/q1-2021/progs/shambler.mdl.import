@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/shambler.mdl-35b36c026b3bab808569cbfd2cebba0f.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/shambler.mdl"
+dest_files=[ "res://.import/shambler.mdl-35b36c026b3bab808569cbfd2cebba0f.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

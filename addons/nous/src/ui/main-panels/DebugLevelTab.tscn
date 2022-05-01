@@ -1,6 +1,9 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://addons/nous/src/ui/main-panels/DebugLevel.gd" type="Script" id=1]
+[sub_resource type="GDScript" id=1]
+script/source = "tool
+extends VBoxContainer
+"
 
 [node name="_debug" type="VBoxContainer"]
 anchor_right = 1.0
@@ -11,7 +14,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource( 1 )
+script = SubResource( 1 )
 
 [node name="Title" type="RichTextLabel" parent="."]
 margin_right = 1272.0

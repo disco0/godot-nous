@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/boss.mdl-b7a8821524526cd5902d9af66432fdfc.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/boss.mdl"
+dest_files=[ "res://.import/boss.mdl-b7a8821524526cd5902d9af66432fdfc.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

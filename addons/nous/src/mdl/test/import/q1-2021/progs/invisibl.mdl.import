@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/invisibl.mdl-26ef33eeed758e0bb3fb767408bf4410.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/invisibl.mdl"
+dest_files=[ "res://.import/invisibl.mdl-26ef33eeed758e0bb3fb767408bf4410.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

@@ -1,0 +1,17 @@
+[remap]
+
+importer="mdl_importer"
+type="ArrayMesh"
+path="res://.import/bolt2.mdl-6d8f20f8d30af5688636b7271156611e.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/bolt2.mdl"
+dest_files=[ "res://.import/bolt2.mdl-6d8f20f8d30af5688636b7271156611e.tres" ]
+
+[params]
+
+import_as="scene"
+frame=0
+skin=0
+palette="quake"

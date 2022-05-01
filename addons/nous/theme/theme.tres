@@ -26,7 +26,6 @@ content_margin_top = 5.0
 Button/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
 Button/colors/font_color_hover = Color( 0.784314, 0.784314, 0.784314, 1 )
 Label/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
-Label/fonts/monospace = ExtResource( 2 )
 OptionButton/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
 OptionButton/colors/font_color_pressed = Color( 0.878431, 0.878431, 0.878431, 1 )
 OptionButton/styles/hover = SubResource( 1 )

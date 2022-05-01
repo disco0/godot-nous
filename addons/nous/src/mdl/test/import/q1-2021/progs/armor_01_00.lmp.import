@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/armor_01_00.lmp-d0861556261ec76fac825c99095508c6.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/armor_01_00.lmp"
+dest_files=[ "res://.import/armor_01_00.lmp-d0861556261ec76fac825c99095508c6.tres" ]
+
+[params]
+

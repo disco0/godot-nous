@@ -16,6 +16,7 @@ var ui_visible_start := false
 # Debugging
 var last_event_stage := '<NONE>'
 
+
 func _init(plugin: EditorPlugin, ui_3d := ObjBuilder3DMenuRes.instance(), start_visible := false): # : NavMeshBuilder, ui3d: NavMeshBuilderContainer):
 	dprint.write('', 'on:init')
 	last_event_stage = 'INIT'
@@ -38,25 +39,32 @@ func _init(plugin: EditorPlugin, ui_3d := ObjBuilder3DMenuRes.instance(), start_
 
 	plugin.connect('tree_exiting', self, 'unload')
 
+
 func _ready() -> void:
 	last_event_stage = 'READY'
+
 
 func _enter_tree() -> void:
 	dprint.write('', 'on:enter-tree')
 	last_event_stage = 'IN-TREE'
 
+
 func _exit_tree() -> void:
 	last_event_stage = 'EXIT-TREE'
+
 
 # Set/clear reference
 func edit(node) -> void:
 	ui_3d.edit(node)
 
+
 func editable(node) -> bool:
 	return ui_3d.editable(node)
 
+
 func handles(object) -> bool:
 	return ui_3d.handles(object)
+
 
 func link():
 	dprint.write('', 'link')
@@ -66,6 +74,7 @@ func link():
 
 	plugin.add_control_to_dock(EditorPlugin.DOCK_SLOT_RIGHT_UL, ui_dock)
 	ui_dock.set_visible(false)
+
 
 func unload():
 	dprint.write('', 'unload')
@@ -87,6 +96,7 @@ func unload():
 
 	#if is_instance_valid(builder):
 	#	builder = null
+
 
 func set_visible(value: bool) -> void:
 	if is_instance_valid(ui_3d) and ui_3d.is_inside_tree():

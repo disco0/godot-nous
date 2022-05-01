@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.palette"
+type="Resource"
+path="res://.import/grenade_00_00.lmp-863dbeb867dfe1feef99eb34b8831a74.tres"
+
+[deps]
+
+source_file="res://addons/nous/src/mdl/test/import/q1-2021/progs/grenade_00_00.lmp"
+dest_files=[ "res://.import/grenade_00_00.lmp-863dbeb867dfe1feef99eb34b8831a74.tres" ]
+
+[params]
+
