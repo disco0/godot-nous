@@ -53,12 +53,3 @@ Entity scenes are matched with and passed to implementations of the base `Entity
 <img src="media/extractor-register-01.png" alt="Add Extractor"/>
 
 See `src/extractors` folder for various implementations created for and used in Cruelty Squad mod development. A more streamlined interface for adding extractors is very much on the TODO list.
-
-### Navigation Meshes
-
-Feature from an older version of Nous (née `csquad-util`) for programatically building navigation meshes via entity filtering and group tagging, as well as saving/loading from saved mesh resource files on disk—very much a game specific workaround, but possibly useful.
-
-<img src="media/navbuilder-menu-01.png" alt="NavBuilder Menu"/>
-
-
-
